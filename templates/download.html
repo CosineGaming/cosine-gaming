@@ -1,0 +1,26 @@
+﻿{% extends "standard.html" %}
+
+{% block title %}Download {{ game.name }} - Cosine Gaming{% endblock %}
+
+{% block main %}
+
+	<div class="wrap">
+
+		<h2 class="entry-spaced bottom-spaced">
+			Downloading {{ game.name }}
+		</h2>
+
+		<p class="bottom-spaced">
+			If your download does not start automatically in a few seconds, please click this <a href="http://jokingjudahcom.ipage.com/downloads/{{ game.file }}">direct link</a>.
+		</p>
+
+		<p class="bottom-spaced">{{ game.description }}<p>
+			Thank you for downloading {{ game.name }}. Now for the waiting.
+			You could twiddle your thumbs, or you could go back to <a href="/games">Games</a> and play an online game.
+		</p>
+
+		<iframe id="download" width="1" height="1" src="http://jokingjudahcom.ipage.com/downloads/{{ game.file }}" style="display:none;"></iframe>
+
+	</div>
+
+{% endblock %}

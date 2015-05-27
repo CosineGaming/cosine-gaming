@@ -1,0 +1,53 @@
+{% extends "standard.html" %}
+
+{% block title %}
+	Blog Writer - Cosine Gaming
+{% endblock %}
+
+{% block main %}
+
+	<div class="wrap">
+
+		<h2 class="entry-spaced">
+			<a href="/blog/">Cosine Gaming Blog</a>
+		</h2>
+		<p style="font-size: 25px; margin-bottom: 40px;">A Blog about games, new CG projects, and more.</p>
+
+		{% if failed %}
+			<p style="font-weight: bold; font-size: 26px;" class="highlight">
+				Sorry, wrong password. Try again.
+			</p>
+			<br />
+		{% endif %}
+
+		<div class="horizontal-ad" style="width: 468px;">
+			<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+				<!-- Short wide banner -->
+				<ins class="adsbygoogle"
+				     style="display:inline-block;width:468px;height:60px"
+				     data-ad-client="ca-pub-2773641619627735"
+				     data-ad-slot="6180957807"></ins>
+				<script>
+				(adsbygoogle = window.adsbygoogle || []).push({});
+			</script>
+		</div>
+
+		<div class="entry-spaced"></div>
+
+		<form method="post" action="">
+
+			Password: <input type="password" name="password" required />
+			<br />
+			Title: <input type="text" name="title" value="{{ title }}" required />
+			<br />
+			Author: <input type="text" name="author" value="{{ author }}" required />
+			<br />
+			<textarea name="post" style="width: 100%; height: 500px;" required>{{ post }}</textarea>
+			<br />
+			<input type="submit" value="Post" />
+
+		</article>
+
+	</div>
+
+{% endblock %}

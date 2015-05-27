@@ -1,0 +1,90 @@
+{% extends "standard.html" %}
+
+{% block title %}Contact Us - Cosine Gaming{% endblock %}
+{% block description %}Have a question or comment on Cosine Gaming? Feel free to let us know.{% endblock %}
+
+{% block head %}
+	{{ super() }}
+	<style>
+		form p {
+			font-weight: bold;
+		}
+	</style>
+{% endblock %}
+
+{% block main %}
+
+	<div class="wrap">
+
+		<h2 class="entry-spaced bottom-spaced">
+			Fill out our survey to help us improve
+		</h2>
+
+		{% if filled_out %}
+			<p style="font-weight: bold; font-size: 26px;" class="highlight">Thank you for providing the information that helps us improve Cosine Gaming for you.</p>
+			<br />
+		{% endif %}
+
+		<p style="font-size: 26px;" class="bottom-spaced">All entries are optional.</p>
+
+		<form name="survey" action="/contact/submit" method="post">
+
+			<p>What is your favorite game you've played on Cosine Gaming?</p>
+			<input type="radio" name="favorite-game" value="Dash" id="DashFav" />               <label for="DashFav">Dash</label>
+			<input type="radio" name="favorite-game" value="Less than Shadows" id="LTSFav" />   <label for="LTSFav">Less than Shadows</label>
+			<input type="radio" name="favorite-game" value="Parallel" id="ParallelFav" />       <label for="ParallelFav">Parallel</label>
+			<input type="radio" name="favorite-game" value="Revenge" id="RevengeFav" />         <label for="RevengeFav">Revenge</label>
+			<input type="radio" name="favorite-game" value="Sniper" id="SniperFav" />           <label for="SniperFav">Sniper</label>
+			<input type="radio" name="favorite-game" value="Ace Slicenick" id="SlicenickFav" /> <label for="SlicenickFav">Ace Slicenick</label>
+			<input type="radio" name="favorite-game" value="Stealth" id="StealthFav" />         <label for="StealthFav">Stealth</label>
+			<input type="radio" name="favorite-game" value="Circle Wars" id="CWFav" />          <label for="CWFav">Circle Wars</label>
+			<p style="padding-top: 40px;">Least Favorite?</p>
+			<input type="radio" name="least-favorite-game" value="Dash" id="DashWorst" />                <label for="DashWorst">Dash</label>
+			<input type="radio" name="least-favorite-game" value="Less than Shadows" id="LTSWorst" />    <label for="LTSWorst">Less than Shadows</label>
+			<input type="radio" name="least-favorite-game" value="Parallel" id="ParallelWorst" />        <label for="ParallelWorst">Parallel</label>
+			<input type="radio" name="least-favorite-game" value="Revenge" id="RevengeWorst" />          <label for="RevengeWorst">Revenge</label>
+			<input type="radio" name="least-favorite-game" value="Sniper" id="SniperWorst" />            <label for="SniperWorst">Sniper</label>
+			<input type="radio" name="least-favorite-game" value="Ace Slicenick" id="SlicenickWorst" />  <label for="SlicenickWorst">Ace Slicenick</label>
+			<input type="radio" name="least-favorite-game" value="Stealth" id="StealthWorst" />          <label for="StealthWorst">Stealth</label>
+			<input type="radio" name="least-favorite-game" value="Circle Wars" id="CWWorst" />           <label for="CWWorst">Circle Wars</label>
+			<p style="padding-top: 40px;">What are some things that could be added to a game?</p>
+			<textarea name="change-in-game"></textarea>
+			<p style="padding-top: 40px;">Any suggestions for a new game you'd like to see?</p>
+			<textarea name="new-game"></textarea>
+			<p style="padding-top: 40px;">Please rate on a scale of 1 to 10:</p>
+			<p>Games overall:</p>
+			1 <input type="range" name="game-rating" min="1" max="10" value="5" /> 10
+			<p>Gameplay:</p>
+			1 <input type="range" name="gameplay-rating" min="1" max="10" value="5" /> 10
+			<p>Story:</p>
+			1 <input type="range" name="story-rating" min="1" max="10" value="5" /> 10
+			<p>Graphics:</p>
+			1 <input type="range" name="graphics-rating" min="1" max="10" value="5" /> 10
+
+			<p style="padding-top: 40px;">Please rate on a scale of 1 to 10:</p>
+			<p>Website overall:</p>
+			1 <input type="range" name="website-rating" min="1" max="10" value="5" /> 10
+			<p>Website content:</p>
+			1 <input type="range" name="content-rating" min="1" max="10" value="5" /> 10
+			<p>Website design:</p>
+			1 <input type="range" name="design-rating" min="1" max="10" value="5" /> 10
+
+			<p style="padding-top: 40px;">Any other comments?</p>
+			<textarea name="comment"></textarea>
+			<br>
+			<span style="padding-top: 40px;">If you'd like to sign up for the Cosine Gaming newsletter, enter your email here:</span>
+			<input type="email" name="email" />
+			<br>
+			<input type="submit" value="Submit" style="display: block; margin-top: 20px;" />
+
+		</form>
+
+		<br />
+
+		<p>
+			You can also email us at <a href="mailto:cosinegaming@gmail.com?Subject=Online%20Form">cosinegaming@gmail.com</a>.
+		</p>
+
+	</div>
+
+{% endblock main %}

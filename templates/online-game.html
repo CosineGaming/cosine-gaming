@@ -1,0 +1,19 @@
+{% extends "standard.html" %}
+
+{% block title %}{{ game.name }} - Cosine Gaming{% endblock %}
+{% block description %}{{ game.description }}{% endblock %}
+
+{% block main %}
+
+<div class="wrap" style="max-width: {{ game.size[0] }}px">
+
+    <h2 class="entry-spaced bottom-spaced">{{ game.name }}</h2>
+    <object width="{{ game.size[0] }}px" height="{{ game.size[1] }}" data="{{ game.file }}">
+        Sorry, you need <a href="http://get.adobe.com/jp/flashplayer/otherversions/">Adobe Flash Player</a> to play this game.
+        If you're on a tablet, that probably means you can't play this game.
+    </object>
+    <p style="margin-top: 40px;">{{ game.description }}</p>
+
+</div>
+
+{% endblock %}

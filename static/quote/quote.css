@@ -1,0 +1,106 @@
+@font-face {
+    font-family: Stoke;
+    src: url(/quote/stoke.ttf);
+}
+
+@font-face {
+    font-family: Quattrocento;
+    src: url(/quote/quattrocento.ttf);
+}
+
+@font-face {
+    font-family: "Cantata One";
+    src: url(/quote/cantata-one.ttf);
+}
+
+@font-face {
+    font-family: Ledger;
+    src: url(/quote/ledger.ttf);
+}
+
+body {
+    background-color: #674EA7;
+    font-weight: bold;
+}
+
+header {
+    width: 620px;
+    margin: 0 auto;
+    text-align: center;
+    border-bottom: 2px solid #F0F;
+}
+
+h1 {
+    color: #0F0;
+    font-size: 48px;
+    font-family: Stoke;
+}
+
+main {
+    width: 620px;
+    margin: 0 auto;
+}
+
+section {
+    border-bottom: 1px solid #9FC5E8;
+}
+
+section:last-of-type { border: none; }
+
+h2 {
+    color: #F90;
+    font-size: 37px;
+    font-family: Quattrocento;
+    text-decoration: underline;
+}
+
+.quote {
+    color: #0FF;
+    font-size: 24px;
+    font-family: "Cantata One";
+    text-align: justify;
+}
+
+.attribution {
+    color: #9FC5E8;
+    font-size: 24px;
+    font-family: Ledger;
+}
+
+aside {
+    float: right;
+    padding-top: 20px;
+    color: #0F0;
+    padding-left: 40px;
+    font-family: Stoke;
+}
+
+h3 {
+    text-decoration: underline;
+    font-size: 18px;
+}
+
+label {
+    font-size: 18px;
+}
+
+footer {
+    border-top: 2px solid #F0F;
+    width: 620px;
+    margin: 0 auto;
+    text-align: center;
+    color: #9FC5E8;
+    font-size: 25px;
+}
+
+footer a {
+    color: #0FF;
+}
+
+footer a:hover {
+    color: #F90;
+}
+
+footer a:active {
+    color: #9FC5E8;
+}

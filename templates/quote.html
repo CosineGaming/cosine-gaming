@@ -1,0 +1,50 @@
+<html>
+
+    <head>
+
+        <link rel="stylesheet" href="/static/quote/quote.css" />
+
+    </head>
+
+    <body>
+
+        <header>
+
+            <h1>Quote o' da Day</h1>
+
+        </header>
+
+        <main>
+
+            {% for quote in quotes %}
+
+            <section>
+
+                    <aside>
+
+                        <h3>Did you like this quote?</h3>
+                        <label for="{{ quote.name }}-yes" />Yes</label> <input type="checkbox" name="like" value="yes" id="{{ quote.name }}-yes" />
+                        <br />
+                        <label for="{{ quote.name }}-no" />No </label> <input type="checkbox" name="like" value="no" id="{{ quote.name }}-no" />
+
+                    </aside>
+
+                    <h2>{{ quote.name }}:</h2>
+                    <p class="quote">&#x201c;{{ quote.quote }}&#x201d;</p>
+                    <p class="attribution">-{{ quote.attribution }}</p>
+
+            </section>
+
+            {% endfor %}
+
+        </main>
+
+        <footer>
+
+            <p>Sponsored by <a href="/">Cosine Gaming</a>.</p>
+
+        </footer>
+
+    </body>
+
+</html>
