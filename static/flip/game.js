@@ -6,8 +6,8 @@ var player = null;
 var matrix = null;
 
 var answer = null;
+var reset = null;
 
-var levels = null;
 var level = null;
 var levelLines = null;
 var lineGroup = null;
@@ -36,162 +36,6 @@ var firefoxBlurFix = 1;
 function initialize()
 {
 
-    // x, y, width, height
-    levels = [
-        {
-            // One vertical line
-            lines :
-            [
-                [50, 0, 0, 100]
-            ],
-            answer :
-                [[-1,0,100],[0,1,0],[0,0,1]]
-            , player :
-                [4, 46],
-            par: 1
-        },
-        {
-            // Three vertical lines
-            lines :
-            [
-                [40, 0, 0, 100],
-                [50, 0, 0, 100],
-                [60, 0, 0, 100]
-            ],
-            answer :
-                [[1,0,60],[0,1,0],[0,0,1]]
-            , player :
-                [4, 46],
-            par: 4
-        },
-        {
-            // 3 lines, H+V
-            lines :
-            [
-                [0, 60, 100, 0],
-                [40, 0, 0, 100],
-                [50, 0, 0, 100]
-            ],
-            answer :
-                [[1,0,40],[0,-1,120],[0,0,1]]
-            , player :
-                [4, 46],
-            par: 5
-        },
-        {
-            // Vertical, diagonal
-            lines :
-            [
-                [30, 0, 20, 100],
-                [60, 0, 0, 100]
-            ],
-            answer :
-                [[-0.7041420118343197,0.7100591715976331,-4.2603550295857815],[0.7100591715976332,0.7041420118343197,1.7751479289940804],[0,0,1]]
-            , player :
-                [4, 46],
-            par: 3
-        },
-        {
-            // Cross with one diagonal
-            lines :
-            [
-                [20, 0, 30, 100],
-                [30, 0, 0, 100],
-                [0, 70, 100, 0]
-            ],
-            answer :
-                [[-0.8348623853211009,0.5504587155963303,-3.6697247706422047],[-0.5504587155963302,-0.834862385321101,138.89908256880736],[0,0,1]]
-            , player :
-                [4, 46],
-            par: 4
-        },
-        {
-            // Easy diagonals
-            lines :
-            [
-                [10, 0, 10, 100],
-                [50, 0, 0, 100],
-                [0, 20, 100, 40]
-            ],
-            answer :
-                [[0.14999823406835316,0.9886862645836523,6.597520631968052],[0.988686264583652,-0.14999823406835328,68.11551547544767],[0,0,1]]
-            , player :
-                [4, 46],
-            par: 5
-        },
-        {
-            // 2-V-1-H-1-D
-            lines :
-            [
-                [30, 0, 0, 100],
-                [50, 0, 0, 100],
-                [0, 70, 100, -30],
-                [0, 70, 100, 0]
-            ],
-            answer :
-                [[0.834862385321101,0.5504587155963303,34.862385321100916],[-0.5504587155963302,0.8348623853211009,-10.45871559633028],[0,0,1]]
-            , player :
-                [4, 46],
-            par: 6
-        },
-        {
-            // Cross with two diagonals
-            lines :
-            [
-                [0, 20, 100, 40],
-                [0, 60, 100, -10],
-                [40, 0, 0, 100],
-                [0, 80, 100, 0]
-            ],
-            answer :
-                [[-0.7241379310344828,0.689655172413793,42.11676340047798],[0.6896551724137929,0.7241379310344827,-5.995220211676354],[0,0,1]]
-            , player :
-                [4, 46],
-            par: 7
-        },
-        {
-            // 2-V-0-H-2-D
-            lines :
-            [
-                [20, 0, 0, 100],
-                [50, 0, 0, 100],
-                [10, 0, 90, 70],
-                [0, 70, 100, -50]
-            ],
-            answer :
-                [[-0.24615384615384622,-0.9692307692307695,76.15384615384615],[0.9692307692307695,-0.24615384615384622,76.76923076923077],[0,0,1]]
-            , player :
-                [4, 46],
-            par: 6
-        },
-        {
-            // Cross with two diagonals, containing a V shape
-            // TODO: Delete?
-            lines :
-            [
-                [0, 10, 50, 90],
-                [50, 0, 0, 100],
-                [0, 60, 100, 0],
-                [0, 40, 100, -10]
-            ],
-            answer :
-                [[0.6106926463383254,-0.7918677236182143,102.80083691920044],[0.7918677236182146,0.6106926463383255,46.69157747803904],[0,0,1]]
-            , player :
-                [4, 46]
-        }/*,
-        {
-            // 1-V-0-H-3-D
-            lines :
-            [
-                //
-            ],
-            answer :
-                //
-            , player :
-                [4, 46]
-        }*/
-    ];
-
     container = document.getElementById("game");
     container.setAttribute("tabindex", 0)
     container.addEventListener("mouseup", clicked);
@@ -207,6 +51,7 @@ function initialize()
     var playerSize = 8 * firefoxBlurFix;
     player = game.image("/static/flip/assets/player.svg", playerSize, playerSize);
     answer = game.image("/static/flip/assets/target.svg", playerSize, playerSize);
+    reset = game.image("/static/flip/assets/reset.svg", 6, 6).move(72, 4);
 
     score = 0;
     startTime = new Date();
@@ -390,6 +235,13 @@ function clicked(e)
 
     if (x >= 0 && x <= 100)
     {
+
+        if (x > reset.x() && x < reset.x() + reset.width()
+            && y > reset.y() && y < reset.y() + reset.height())
+        {
+            setLevel(level);
+            return;
+        }
 
         var line = getLine(x, y);
 

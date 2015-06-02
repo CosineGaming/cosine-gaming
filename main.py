@@ -224,11 +224,20 @@ def view_flip_data():
 	for i in range(len(numbers)):
 		if numbers[i] == 0:
 			continue
-		time = times[i] / float(numbers[i])
-		move = moves[i] / float(numbers[i])
-		rv += "LEVEL " + str(i+1) + ":<br />Completions: " + str(numbers[i]) +\
+		number = numbers[i]
+		time = times[i] / float(number)
+		move = moves[i] / float(number)
+		gaveup = 100
+		if i + 1 < len(numbers):
+			nxt = numbers[i + 1]
+			gaveup = 100 - 100 * nxt / number
+		madeit = number * 100 / numbers[0]
+		rv += "LEVEL " + str(i+1) + ":<br />Completions: " + str(number) +\
 			"<br />Average time: " + str(time) +\
-			"<br />Average moves: " + str(move) + "<br />----------<br />"
+			"<br />Average moves: " + str(move) +\
+			"<br />Percent gave up: " + str(gaveup) +\
+			"<br />Percent made it here: " + str(madeit)
+		rv += "<br />----------<br />"
 
 	rv += '<br /><a href="clear">Clear data</a>'
 
