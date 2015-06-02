@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+
+        <link rel="stylesheet" href="/static/style.css" />
+
+        <script src="/static/flip/numeric.min.js"></script>
+        <script src="/static/flip/svg.min.js"></script>
+        <script src="/static/flip/game.js"></script>
+
+        <title>Flip</title>
+
+        <meta charset="utf-8" />
+
+        <style>
+
+            #game:focus {
+                outline: none;
+            }
+
+            #three-column {
+                display: flex;
+                overflow: hidden;
+            }
+
+            .column {
+                padding: 0px 20px;
+                flex: 1;
+                overflow: auto;
+            }
+
+            svg {
+                background-color: white;
+            }
+
+            #game {
+                overflow: visible;
+                flex: 0 1 auto;
+            }
+
+            h2 {
+                text-align: center;
+            }
+
+            .flip-ad {
+                float: right;
+                margin-top: 40px;
+            }
+
+        </style>
+
+    </head>
+    <body>
+
+        <div id="three-column">
+
+            <div class="column">
+                <div class="flip-ad">
+                    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                        <!-- Flip sidebar -->
+                        <ins class="adsbygoogle"
+                         style="display:inline-block;width:300px;height:600px"
+                         data-ad-client="ca-pub-2773641619627735"
+                         data-ad-slot="5360343802"></ins>
+                        <script>
+                        (adsbygoogle = window.adsbygoogle || []).push({});
+                    </script>
+                </div>
+            </div>
+
+            <div id="game" class="column"></div>
+
+            <div class="column">
+
+                <nav><h1><a href="/games">Cosine Gaming</a></h1></nav>
+                <h2 class="entry-spaced">Flip</h2>
+                <p class="entry-spaced">Flip is a puzzle game about reflecting.</p>
+                <p class="entry-spaced">
+                    Try to get the white sheep to the black one.
+                    Click on a line to reflect across it.
+                </p>
+                <p class="entry-spaced">
+                    You get 20 points if you solve a level without going over the par.
+                    10 for solving one. You lose 5 points for going out of the level.
+                </p>
+
+            </div>
+
+        </div>
+
+    </body>
+
+</html>

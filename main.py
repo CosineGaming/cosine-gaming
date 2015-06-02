@@ -64,6 +64,7 @@ class Game():
 	size = False
 
 games = [
+	Game("Flip"),
 	Game("Dash", "Dash.exe"),
 	Game("Revenge", size=[800, 595]),
 	Game("Parallel", "Parallel.zip"),
@@ -131,6 +132,10 @@ def new_home():
 @app.route("/download/<file>")
 def download(file):
 	return custom_render("download.html", game=Game(file, file))
+
+@app.route("/flip")
+def flip_game():
+	return custom_render("flip.html")
 
 @app.route("/blog/")
 def blog_front_page():

@@ -31,6 +31,8 @@ var startedTime = null;
 
 var version = "0.0";
 
+var firefoxBlurFix = 1;
+
 function initialize()
 {
 
@@ -90,20 +92,6 @@ function initialize()
             par: 3
         },
         {
-            // Easy diagonals
-            lines :
-            [
-                [10, 0, 10, 100],
-                [50, 0, 0, 100],
-                [0, 20, 100, 40]
-            ],
-            answer :
-                [[0.14999823406835316,0.9886862645836523,6.597520631968052],[0.988686264583652,-0.14999823406835328,68.11551547544767],[0,0,1]]
-            , player :
-                [4, 46],
-            par: 5
-        },
-        {
             // Cross with one diagonal
             lines :
             [
@@ -116,6 +104,20 @@ function initialize()
             , player :
                 [4, 46],
             par: 4
+        },
+        {
+            // Easy diagonals
+            lines :
+            [
+                [10, 0, 10, 100],
+                [50, 0, 0, 100],
+                [0, 20, 100, 40]
+            ],
+            answer :
+                [[0.14999823406835316,0.9886862645836523,6.597520631968052],[0.988686264583652,-0.14999823406835328,68.11551547544767],[0,0,1]]
+            , player :
+                [4, 46],
+            par: 5
         },
         {
             // 2-V-1-H-1-D
@@ -190,8 +192,6 @@ function initialize()
         }*/
     ];
 
-    size = window.innerHeight;
-
     container = document.getElementById("game");
     container.setAttribute("tabindex", 0)
     container.addEventListener("mouseup", clicked);
@@ -199,12 +199,14 @@ function initialize()
     container.addEventListener("keyup", pressed);
     container.focus();
 
-    game = SVG("game").size(size,size).viewbox(0,0,100,100);
+    resize();
+    window.onresize = resize;
+
+    game = SVG("game").viewbox(0,0,100,100);
     lineGroup = game.group();
-    player = game.image("assets/player.svg", 8, 8);
-    //player = document.createElement("object")
-    //player.data = "assets/player.svg";
-    answer = game.image("assets/target.svg", 8, 8);
+    var playerSize = 8 * firefoxBlurFix;
+    player = game.image("/static/flip/assets/player.svg", playerSize, playerSize);
+    answer = game.image("/static/flip/assets/target.svg", playerSize, playerSize);
 
     score = 0;
     startTime = new Date();
@@ -232,11 +234,12 @@ function setLevel(lvl)
     lastLine = null;
 
     matrix = numeric.identity(3);
+    numeric.diveq(matrix, firefoxBlurFix);
     skipTween();
 
     var pos = levels[level].player;
-    player.x(pos[0]);
-    player.y(pos[1]);
+    player.x(pos[0]*firefoxBlurFix);
+    player.y(pos[1]*firefoxBlurFix);
     answer.x(pos[0]);
     answer.y(pos[1]);
 
@@ -277,7 +280,12 @@ function setLevel(lvl)
         scoreText.x(80);
         scoreText.y(6);
     }
-    parText.text("PAR: " + levels[level].par);
+    var par = levels[level].par;
+    if (!par)
+    {
+        par = "Unsolved"
+    }
+    parText.text("PAR: " + par);
     onParText.hide();
     levelText.text("LEVEL: " + (level + 1));
 
@@ -376,44 +384,50 @@ function getLine(x, y)
 function clicked(e)
 {
 
-    var x = e.clientX / size * 100;
-    var y = e.clientY / size * 100;
+    var x = gameX(e.clientX);
+    var y = gameY(e.clientY);
+    e.preventDefault();
 
-    var line = getLine(x, y);
-
-    if (line != null)
+    if (x >= 0 && x <= 100)
     {
 
-        skipTween();
+        var line = getLine(x, y);
 
-        reflect(levels[level].lines[line]);
-
-        moves += 1;
-        tweenDelta = numeric.div(numeric.sub(matrix, displayMatrix), 20);
-        tweenHandle = requestAnimationFrame(tween);
-
-        var center = numeric.dot(matrix, [player.x() + 4, player.y() + 4, 1]);
-        if (center[0] < 0 || center[0] > 100 || center[1] < 0 || center[1] > 100)
+        if (line != null)
         {
-            score -= 5;
-            setTimeout(setLevel, 1000, level);
-        }
-        if (matEq(matrix, levels[level].answer))
-        {
-            sendData();
-            if (moves == levels[level].par)
-            {
-                onParText.show();
-                score += 20;
-            }
-            else
-            {
-                score += 10;
-            }
-            setTimeout(setLevel, 1000, level + 1);
-        }
 
-        redraw();
+            skipTween();
+
+            reflect(levels[level].lines[line]);
+
+            moves += 1;
+            tweenDelta = numeric.div(numeric.sub(matrix, displayMatrix), 20);
+            tweenHandle = requestAnimationFrame(tween);
+
+            var center = numeric.dot(matrix, [player.x() + 4, player.y() + 4, 1]);
+            if (center[0] < 0 || center[0] > 100 || center[1] < 0 || center[1] > 100)
+            {
+                score -= 5;
+                setTimeout(setLevel, 1000, level);
+            }
+            if (matEq(matrix, levels[level].answer))
+            {
+                sendData();
+                if (moves == levels[level].par)
+                {
+                    onParText.show();
+                    score += 20;
+                }
+                else
+                {
+                    score += 10;
+                }
+                setTimeout(setLevel, 1000, level + 1);
+            }
+
+            redraw();
+
+        }
 
     }
 
@@ -422,20 +436,25 @@ function clicked(e)
 function hovered(e)
 {
 
-    var x = e.clientX / size * 100;
-    var y = e.clientY / size * 100;
+    var x = gameX(e.clientX);
+    var y = gameY(e.clientY);
 
     if (lastLine != null)
     {
         levelLines[lastLine].stroke({ color: "#000" });
     }
 
-    var line = getLine(x, y);
-
-    if (line != null)
+    if (x >= 0 && x <= 100)
     {
-        levelLines[line].stroke({ color: "#888" });
-        lastLine = line;
+
+        var line = getLine(x, y);
+
+        if (line != null)
+        {
+            levelLines[line].stroke({ color: "#888" });
+            lastLine = line;
+        }
+
     }
 
 }
@@ -443,7 +462,7 @@ function hovered(e)
 function pressed(e)
 {
 
-    if (e.keyCode == "A".charCodeAt(0))
+    if (e.keyCode == "=".charCodeAt(0))
     {
         out = "["
         for (var x=0; x<3; x++)
@@ -492,7 +511,7 @@ function reflect(line)
         var q1 = m + (1 / m);
         var q2 = 1 + m*m;
         // Matricized version of http://martin-thoma.com/reflecting-a-point-over-a-line/
-        flip = [[2/m/q1 - 1, 2/q1, -2*b/q1], [2*m/q2, 2*m*m/q2 - 1, 2*b/q2], [0, 0 , 1]];
+        flip = [[2/m/q1 - 1, 2/q1, -2*b/q1], [2*m/q2, 2*m*m/q2 - 1, 2*b/q2], [0, 0, 1]];
     }
     else
     {
@@ -603,6 +622,23 @@ function slope(line)
     }
 }
 
+function gameX(windowX)
+{
+    return (windowX - window.innerWidth / 2) / size * 100 + 50;
+}
+function gameY(windowY)
+{
+    return windowY / size * 100;
+}
+
+function resize()
+{
+    size = window.innerHeight;
+    container.style.width = size + "px";
+    container.style.height = size + "px";
+    document.getElementById("three-column").style.height = size + "px";
+}
+
 function sendData()
 {
 
@@ -610,7 +646,7 @@ function sendData()
     var now = new Date();
     var time = Math.floor((now - startTime) / 1000);
     var req = new XMLHttpRequest();
-    req.open("get", "http://localhost:8080/flip/data?level="+level+"&time="+time+"&moves="+moves, true);
+    req.open("get", "/flip/data?level="+level+"&time="+time+"&moves="+moves, true);
     req.send();
     startTime = now;
 
