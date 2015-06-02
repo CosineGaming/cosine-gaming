@@ -249,35 +249,35 @@ function setLevel(lvl)
     {
         movesText = game.text("");
         movesText.font(font);
-        movesText.x(4);
+        movesText.x(80);
         movesText.y(2);
     }
     if (parText == null)
     {
         parText = game.text("");
         parText.font(font);
-        parText.x(4)
+        parText.x(80)
         parText.y(6);
     }
     if (onParText == null)
     {
         onParText = game.text("ON PAR!");
         onParText.font(font);
-        onParText.x(4);
+        onParText.x(80);
         onParText.y(10);
     }
     if (levelText == null)
     {
         levelText = game.text("");
         levelText.font(font);
-        levelText.x(80);
+        levelText.x(4);
         levelText.y(2);
     }
     if (scoreText == null)
     {
         scoreText = game.text("");
         scoreText.font(font);
-        scoreText.x(80);
+        scoreText.x(4);
         scoreText.y(6);
     }
     var par = levels[level].par;
