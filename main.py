@@ -189,7 +189,13 @@ def view_results():
 		for key in entry._properties.iterkeys():
 			rv += key + ": " + str(getattr(entry, key)) + "<br />"
 		rv += "--------------<br />"
+	rv += '<br /><a href="clear">Clear data</a>'
 	return rv
+
+@app.route("/contact/clear")
+def clear_results():
+	ndb.delete_multi(Survey_Entry.query().fetch(keys_only=True))
+	return view_results()
 
 @app.route("/flip/data", methods=["get"])
 def collect_flip_data():
@@ -217,14 +223,21 @@ def view_flip_data():
 	rv = ""
 	for i in range(len(numbers)):
 		if numbers[i] == 0:
-			break
+			continue
 		time = times[i] / float(numbers[i])
 		move = moves[i] / float(numbers[i])
-		rv += "LEVEL " + str(i) + ":<br />Completions: " + str(numbers[i]) +\
+		rv += "LEVEL " + str(i+1) + ":<br />Completions: " + str(numbers[i]) +\
 			"<br />Average time: " + str(time) +\
 			"<br />Average moves: " + str(move) + "<br />----------<br />"
 
+	rv += '<br /><a href="clear">Clear data</a>'
+
 	return rv
+
+@app.route("/flip/data/clear")
+def clear_flip_data():
+	ndb.delete_multi(Flip_Data.query().fetch(keys_only=True))
+	return view_flip_data()
 
 @app.route("/quote-alias")
 def quote():
