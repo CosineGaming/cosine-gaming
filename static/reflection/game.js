@@ -13,14 +13,23 @@ var levelLines = null;
 var lineGroup = null;
 
 var moves = null;
+var score = null;
+
 var movesText = null;
+var parText = null;
+var onParText = null;
 var levelText = null;
+var scoreText = null;
 
 var lastLine = null;
 
-var tweenTo = null;
+var displayMatrix = null;
 var tweenDelta = null;
 var tweenHandle = null;
+
+var startedTime = null;
+
+var version = "0.0";
 
 function initialize()
 {
@@ -36,7 +45,8 @@ function initialize()
             answer :
                 [[-1,0,100],[0,1,0],[0,0,1]]
             , player :
-                [4, 46]
+                [4, 46],
+            par: 1
         },
         {
             // Three vertical lines
@@ -49,7 +59,8 @@ function initialize()
             answer :
                 [[1,0,60],[0,1,0],[0,0,1]]
             , player :
-                [4, 46]
+                [4, 46],
+            par: 4
         },
         {
             // 3 lines, H+V
@@ -62,7 +73,8 @@ function initialize()
             answer :
                 [[1,0,40],[0,-1,120],[0,0,1]]
             , player :
-                [4, 46]
+                [4, 46],
+            par: 5
         },
         {
             // Vertical, diagonal
@@ -74,7 +86,8 @@ function initialize()
             answer :
                 [[-0.7041420118343197,0.7100591715976331,-4.2603550295857815],[0.7100591715976332,0.7041420118343197,1.7751479289940804],[0,0,1]]
             , player :
-                [4, 46]
+                [4, 46],
+            par: 3
         },
         {
             // Easy diagonals
@@ -87,7 +100,8 @@ function initialize()
             answer :
                 [[0.14999823406835316,0.9886862645836523,6.597520631968052],[0.988686264583652,-0.14999823406835328,68.11551547544767],[0,0,1]]
             , player :
-                [4, 46]
+                [4, 46],
+            par: 5
         },
         {
             // Cross with one diagonal
@@ -100,7 +114,8 @@ function initialize()
             answer :
                 [[-0.8348623853211009,0.5504587155963303,-3.6697247706422047],[-0.5504587155963302,-0.834862385321101,138.89908256880736],[0,0,1]]
             , player :
-                [4, 46]
+                [4, 46],
+            par: 4
         },
         {
             // 2-V-1-H-1-D
@@ -112,9 +127,10 @@ function initialize()
                 [0, 70, 100, 0]
             ],
             answer :
-                [[-0.834862385321101,-0.5504587155963304,105.13761467889911],[-0.5504587155963301,0.8348623853211009,-10.45871559633028],[0,0,1]]
+                [[0.834862385321101,0.5504587155963303,34.862385321100916],[-0.5504587155963302,0.8348623853211009,-10.45871559633028],[0,0,1]]
             , player :
-                [4, 46]
+                [4, 46],
+            par: 6
         },
         {
             // Cross with two diagonals
@@ -128,10 +144,27 @@ function initialize()
             answer :
                 [[-0.7241379310344828,0.689655172413793,42.11676340047798],[0.6896551724137929,0.7241379310344827,-5.995220211676354],[0,0,1]]
             , player :
-                [4, 46]
+                [4, 46],
+            par: 7
+        },
+        {
+            // 2-V-0-H-2-D
+            lines :
+            [
+                [20, 0, 0, 100],
+                [50, 0, 0, 100],
+                [10, 0, 90, 70],
+                [0, 70, 100, -50]
+            ],
+            answer :
+                [[-0.24615384615384622,-0.9692307692307695,76.15384615384615],[0.9692307692307695,-0.24615384615384622,76.76923076923077],[0,0,1]]
+            , player :
+                [4, 46],
+            par: 6
         },
         {
             // Cross with two diagonals, containing a V shape
+            // TODO: Delete?
             lines :
             [
                 [0, 10, 50, 90],
@@ -143,7 +176,18 @@ function initialize()
                 [[0.6106926463383254,-0.7918677236182143,102.80083691920044],[0.7918677236182146,0.6106926463383255,46.69157747803904],[0,0,1]]
             , player :
                 [4, 46]
-        }
+        }/*,
+        {
+            // 1-V-0-H-3-D
+            lines :
+            [
+                //
+            ],
+            answer :
+                //
+            , player :
+                [4, 46]
+        }*/
     ];
 
     size = window.innerHeight;
@@ -158,9 +202,17 @@ function initialize()
     game = SVG("game").size(size,size).viewbox(0,0,100,100);
     lineGroup = game.group();
     player = game.image("assets/player.svg", 8, 8);
-    answer = game.image("assets/target.svg", 8, 8)
+    //player = document.createElement("object")
+    //player.data = "assets/player.svg";
+    answer = game.image("assets/target.svg", 8, 8);
 
-    setLevel(0);//levels.length - 1);
+    score = 0;
+    startTime = new Date();
+
+    if (!loadLevel())
+    {
+        setLevel(0);
+    }
 
 }
 
@@ -180,7 +232,6 @@ function setLevel(lvl)
     lastLine = null;
 
     matrix = numeric.identity(3);
-    tweenTo = null;
     skipTween();
 
     var pos = levels[level].player;
@@ -190,21 +241,81 @@ function setLevel(lvl)
     answer.y(pos[1]);
 
     moves = 0;
+    var font = ({ family: "Palatino Linotype", size: 3 });
     if (movesText == null)
     {
         movesText = game.text("");
+        movesText.font(font);
         movesText.x(4);
         movesText.y(2);
-        movesText.font({ family: "Palatino Linotype", size: 3 })
+    }
+    if (parText == null)
+    {
+        parText = game.text("");
+        parText.font(font);
+        parText.x(4)
+        parText.y(6);
+    }
+    if (onParText == null)
+    {
+        onParText = game.text("ON PAR!");
+        onParText.font(font);
+        onParText.x(4);
+        onParText.y(10);
     }
     if (levelText == null)
     {
-        levelText = movesText.clone();
-        levelText.x(80)
+        levelText = game.text("");
+        levelText.font(font);
+        levelText.x(80);
+        levelText.y(2);
+    }
+    if (scoreText == null)
+    {
+        scoreText = game.text("");
+        scoreText.font(font);
+        scoreText.x(80);
+        scoreText.y(6);
+    }
+    parText.text("PAR: " + levels[level].par);
+    onParText.hide();
+    levelText.text("LEVEL: " + (level + 1));
+
+    if (levels[level].answer)
+    {
+        answer.transform("matrix", transformString(levels[level].answer));
     }
 
     redraw();
-    answer.transform("matrix", transformString(levels[level].answer));
+
+    localStorage.setItem("version", version);
+    localStorage.setItem("score", score);
+    localStorage.setItem("level", level);
+
+}
+
+function loadLevel()
+{
+
+    var saveVersion = localStorage.getItem("version");
+    if (saveVersion)
+    {
+        if (saveVersion == version)
+        {
+            score = parseInt(localStorage.getItem("score"));
+            setLevel(parseInt(localStorage.getItem("level")));
+            return true;
+        }
+        else
+        {
+            alert("Sorry, your save game was from an unsupported version.");
+            return false;
+        }
+    }
+    else
+    {
+        return false;
+    }
 
 }
 
@@ -272,7 +383,38 @@ function clicked(e)
 
     if (line != null)
     {
+
+        skipTween();
+
         reflect(levels[level].lines[line]);
+
+        moves += 1;
+        tweenDelta = numeric.div(numeric.sub(matrix, displayMatrix), 20);
+        tweenHandle = requestAnimationFrame(tween);
+
+        var center = numeric.dot(matrix, [player.x() + 4, player.y() + 4, 1]);
+        if (center[0] < 0 || center[0] > 100 || center[1] < 0 || center[1] > 100)
+        {
+            score -= 5;
+            setTimeout(setLevel, 1000, level);
+        }
+        if (matEq(matrix, levels[level].answer))
+        {
+            sendData();
+            if (moves == levels[level].par)
+            {
+                onParText.show();
+                score += 20;
+            }
+            else
+            {
+                score += 10;
+            }
+            setTimeout(setLevel, 1000, level + 1);
+        }
+
+        redraw();
+
     }
 
 }
@@ -365,54 +507,40 @@ function reflect(line)
             flip = [[1, 0, 0], [0, -1, 2 * line[1]], [0, 0, 1]];
         }
     }
-
-    skipTween();
-    tweenTo = numeric.dot(flip, matrix);
-    tweenDelta = numeric.div(numeric.sub(tweenTo, matrix), 20);
-    tweenHandle = window.requestAnimationFrame(tween);
-
-    moves += 1;
-
-    redraw();
+    matrix = numeric.dot(flip, matrix);
 
 }
 
 function redraw()
 {
-    player.transform("matrix", transformString(matrix));
+    player.transform("matrix", transformString(displayMatrix));
     movesText.text("MOVES: " + moves);
-    levelText.text("LEVEL: " + (level + 1));
+    scoreText.text("SCORE: " + score);
 }
 
 function tween()
 {
 
-    numeric.addeq(matrix, tweenDelta);
+    numeric.addeq(displayMatrix, tweenDelta);
     var done = false;
     for (var x=0; x<3 && !done; x++)
     {
         for (var y=0; y<3 && !done; y++)
         {
-            if ((matrix[x][y] > tweenTo[x][y] && tweenDelta[x][y] >= 0)
-                || (matrix[x][y] < tweenTo[x][y] && tweenDelta[x][y] <= 0))
+            if ((displayMatrix[x][y] > matrix[x][y] && tweenDelta[x][y] >= 0)
+                || (displayMatrix[x][y] < matrix[x][y] && tweenDelta[x][y] <= 0))
             {
                 done = true;
-                matrix = tweenTo;
-                var center = numeric.dot(matrix, [player.x() + 4, player.y() + 4, 1]);
-                if (center[0] < 0 || center[0] > 100 || center[1] < 0 || center[1] > 100)
-                {
-                    setLevel(level);
-                }
-                if (matEq(matrix, levels[level].answer))
-                {
-                    setTimeout(setLevel, 750, level + 1);
-                }
             }
         }
     }
     if (!done)
     {
-        tweenHandle = window.requestAnimationFrame(tween);
+        tweenHandle = requestAnimationFrame(tween);
+    }
+    else
+    {
+        displayMatrix = matrix;
     }
     redraw();
 
@@ -422,13 +550,10 @@ function skipTween()
 {
     if (tweenHandle)
     {
-        window.cancelAnimationFrame(tweenHandle);
+        cancelAnimationFrame(tweenHandle);
         tweenHandle = null;
-        if (tweenTo)
-        {
-            matrix = tweenTo;
-        }
     }
+    displayMatrix = matrix;
 }
 
 function matEq(a, b)
@@ -478,6 +603,19 @@ function slope(line)
     }
 }
 
+function sendData()
+{
+
+    // Send the time it took to beat the level to CG so I can optimize difficulty
+    var now = new Date();
+    var time = Math.floor((now - startTime) / 1000);
+    var req = new XMLHttpRequest();
+    req.open("get", "http://localhost:8080/flip/data?level="+level+"&time="+time+"&moves="+moves, true);
+    req.send();
+    startTime = now;
+
+}
+
 function addLine(line)
 {
     var points = lineGroup.line(line[0], line[1], line[0] + line[2], line[1] + line[3]);
@@ -490,4 +628,4 @@ function transformString(mat)
         "," + mat[0][2] + "," + mat[1][2]
 }
 
-window.onload = initialize;
+onload = initialize;

@@ -77,9 +77,9 @@ games = [
 class Blog_Entry(ndb.Model):
 	index = ndb.IntegerProperty(required=True)
 	date = ndb.DateProperty(required=True, auto_now_add=True)
-	title = ndb.StringProperty(required=True)
-	author = ndb.StringProperty(required=True)
-	post = ndb.TextProperty(required=True)
+	title = ndb.StringProperty(required=True, indexed=False)
+	author = ndb.StringProperty(required=True, indexed=False)
+	post = ndb.TextProperty(required=True, indexed=False)
 	@classmethod
 	def get_max_index(cls):
 		ordered = cls.query().order(-cls.index)
@@ -99,11 +99,13 @@ class Survey_Entry(ndb.Expando):
 	def query_surveys(cls):
 		return cls.query().order(-cls.date)
 
+class Flip_Data(ndb.Model):
+	level = ndb.IntegerProperty(required=True)
+	time = ndb.IntegerProperty(required=True)
+	moves = ndb.IntegerProperty(required=True)
+
 def custom_render(*args, **kwargs):
 	return htmlmin.minify(render_template(*args, **kwargs))
-
-def all_entries():
-	return render_template("entries.txt").split("~~\n\n")
 
 @app.route("/<file>")
 def top_level(file):
@@ -138,8 +140,9 @@ def blog_front_page():
 def blog_page(page, filled_out=False):
 	page = int(page)
 	max_index = Blog_Entry.get_max_index()
-	q = Blog_Entry.query_page(page, max_index).fetch(page_size)
-	return custom_render("blog.html", page="blog", entries=q, blog_page=page, filled_out=filled_out)
+	q = Blog_Entry.query_page(page, max_index).fetch(page_size, keys_only=True)
+	entries = [e.get() for e in q]
+	return custom_render("blog.html", page="blog", entries=entries, blog_page=page, filled_out=filled_out)
 
 @app.route("/blog/post/<index>/")
 def blog_entry(index):
@@ -181,6 +184,41 @@ def view_results():
 		for key in entry._properties.iterkeys():
 			rv += key + ": " + str(getattr(entry, key)) + "<br />"
 		rv += "--------------<br />"
+	return rv
+
+@app.route("/flip/data", methods=["get"])
+def collect_flip_data():
+	data = Flip_Data(level=int(request.args.get("level")),
+		time=int(request.args.get("time")), moves=int(request.args.get("moves")))
+	data.put()
+	return ""
+
+@app.route("/flip/data/view")
+def view_flip_data():
+
+	data = Flip_Data.query().fetch()
+	numbers = []
+	times = []
+	moves = []
+	for piece in data:
+		while len(numbers) <= piece.level:
+			numbers.append(0)
+			times.append(0)
+			moves.append(0)
+		numbers[piece.level] += 1
+		times[piece.level] += piece.time;
+		moves[piece.level] += piece.moves;
+
+	rv = ""
+	for i in range(len(numbers)):
+		if numbers[i] == 0:
+			break
+		time = times[i] / float(numbers[i])
+		move = moves[i] / float(numbers[i])
+		rv += "LEVEL " + str(i) + ":<br />Completions: " + str(numbers[i]) +\
+			"<br />Average time: " + str(time) +\
+			"<br />Average moves: " + str(move) + "<br />----------<br />"
+
 	return rv
 
 @app.route("/quote-alias")
