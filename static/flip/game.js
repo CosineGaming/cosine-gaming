@@ -29,7 +29,7 @@ var tweenHandle = null;
 
 var startedTime = null;
 
-var version = "0.0";
+var version = "0.1";
 
 var firefoxBlurFix = 1;
 
@@ -82,12 +82,6 @@ function setLevel(lvl)
     numeric.diveq(matrix, firefoxBlurFix);
     skipTween();
 
-    var pos = levels[level].player;
-    player.x(pos[0]*firefoxBlurFix);
-    player.y(pos[1]*firefoxBlurFix);
-    answer.x(pos[0]);
-    answer.y(pos[1]);
-
     moves = 0;
     var font = ({ family: "Palatino Linotype", size: 3 });
     if (movesText == null)
@@ -134,6 +128,15 @@ function setLevel(lvl)
     onParText.hide();
     levelText.text("LEVEL: " + (level + 1));
 
+    var pos = levels[level].player;
+    if (pos)
+    {
+        player.x(pos[0]*firefoxBlurFix);
+        player.y(pos[1]*firefoxBlurFix);
+        answer.x(pos[0]);
+        answer.y(pos[1]);
+    }
+
     if (levels[level].answer)
     {
         answer.transform("matrix", transformString(levels[level].answer));
@@ -153,10 +156,21 @@ function loadLevel()
     var saveVersion = localStorage.getItem("version");
     if (saveVersion)
     {
-        if (saveVersion == version)
+
+        score = parseInt(localStorage.getItem("score"));
+        var oldLevel = parseInt(localStorage.getItem("level"));
+        var parts = saveVersion.split(".");
+        var thisVersionParts = version.split(".");
+        if (parts[0] == thisVersionParts[0])
         {
-            score = parseInt(localStorage.getItem("score"));
-            setLevel(parseInt(localStorage.getItem("level")));
+            if (parts[1] == 0)
+            {
+                if (oldLevel >= 7)
+                {
+                    oldLevel += 2;
+                }
+            }
+            setLevel(oldLevel);
             return true;
         }
         else
@@ -164,6 +178,7 @@ function loadLevel()
             alert("Sorry, your save game was from an unsupported version.");
             return false;
         }
+
     }
     else
     {

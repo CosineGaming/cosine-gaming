@@ -154,7 +154,7 @@ def blog_entry(index):
 	index = int(index)
 	q = Blog_Entry.get_exact(index)
 	page = (Blog_Entry.get_max_index() - index) / page_size + 1
-	return custom_render("blog.html", page="blog", entries=q, blog_page=page, full=True)
+	return custom_render("blog.html", page="blog", entries=[q], blog_page=page, full=True)
 
 @app.route("/blog/write/", methods=["get"])
 def blog_writer():
@@ -166,7 +166,10 @@ def submit_blog_post():
 	author = request.form.get("author")
 	post = request.form.get("post")
 	if SHA256.new(request.form.get("password")).hexdigest() == "c54b8857ce43c002c8aaa8190543297dcaeea106632073c0c7cade424e0043ce":
-		index = Blog_Entry.get_max_index() + 1
+		try:
+			index = Blog_Entry.get_max_index() + 1
+		except AttributeError:
+			index = 0
 		entry = Blog_Entry(index=index, title=title, author=author, post=post)
 		entry.put()
 		return custom_render("blog.html", page="blog", entries=[entry], blog_page=1, full=True)
@@ -227,10 +230,10 @@ def view_flip_data():
 		number = numbers[i]
 		time = times[i] / float(number)
 		move = moves[i] / float(number)
-		gaveup = 100
-		if i + 1 < len(numbers):
-			nxt = numbers[i + 1]
-			gaveup = 100 - 100 * nxt / number
+		gaveup = 0
+		if i != 0:
+			last = numbers[i - 1]
+			gaveup = 100 - 100 * number / last
 		madeit = number * 100 / numbers[0]
 		rv += "LEVEL " + str(i+1) + ":<br />Completions: " + str(number) +\
 			"<br />Average time: " + str(time) +\
