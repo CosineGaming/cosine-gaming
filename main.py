@@ -3,6 +3,7 @@ from flask import Markup
 from flask import redirect
 from flask import render_template
 from flask import request
+from flask import url_for
 
 import datetime
 import htmlmin
@@ -64,6 +65,7 @@ class Game():
 	size = False
 
 games = [
+	Game("Swarm"),
 	Game("Flip"),
 	Game("Dash", "Dash.exe"),
 	Game("Revenge", size=[800, 595]),
@@ -269,6 +271,14 @@ def quote():
 		Quote("Friday", "My dad beats me . . . at tic-tac-toe . . . with his belt.", "James Murray")
 	]
 	return custom_render("quote.html", quotes=quotes)
+
+@app.route("/swarm/")
+def swarm_title():
+	return custom_render("swarm/index.html")
+
+@app.route("/swarm/<more>")
+def swarm(more):
+	return custom_render("swarm/" + more + ".html")
 
 @app.errorhandler(404)
 @app.errorhandler(500)

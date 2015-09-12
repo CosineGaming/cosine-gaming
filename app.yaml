@@ -19,6 +19,12 @@ handlers:
 - url: /robots\.txt
   static_files: static/robots.txt
   upload: static/robots\.txt
+- url: /swarm/(.*\..*)
+  static_files: static/swarm/\1
+  upload: static/swarm/.*
+- url: /swarm/play
+  static_files: static/swarm/game.html
+  upload: static/swarm/game.html
 
 - url: /.*
   script: main.app
