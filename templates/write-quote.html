@@ -1,0 +1,53 @@
+<html>
+
+    <head>
+
+        <link rel="stylesheet" href="/static/quote/quote.css" />
+
+    </head>
+
+    <body>
+
+        <header>
+
+            <h1>Quote o' da Day</h1>
+
+        </header>
+
+        <main>
+
+            <form method="post" action="">
+
+                {% if wrote %}
+
+                    <p class="attribution">The quote has been added. <a href="/quote">View</a>.</p>
+
+                {% endif %}
+
+                <section>
+
+                    <h2 class="day"><input type="text" name="day" value="Day" class="day" />:</h2>
+                    <p class="quote">&#x201c;<textarea name="quote" class="quote"></textarea>&#x201d;</p>
+                    <p class="attribution">-<input name="attribution" type="text" class="attribution" /></p>
+
+                </section>
+
+                <section>
+
+                    <input type="submit" value="Update" />
+
+                </section>
+
+            </form>
+
+        </main>
+
+        <footer>
+
+            <p>Sponsored by <a href="/">Cosine Gaming</a>.</p>
+
+        </footer>
+
+    </body>
+
+</html>

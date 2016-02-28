@@ -1,0 +1,86 @@
+LEVEL 1:
+Completions: 2483
+Average time: 80.591220298
+Average moves: 1.00483286347
+Percent gave up: 0
+Percent made it here: 100
+----------
+LEVEL 2:
+Completions: 2065
+Average time: 37.5278450363
+Average moves: 7.33946731235
+Percent gave up: 17
+Percent made it here: 83
+----------
+LEVEL 3:
+Completions: 1608
+Average time: 30.6486318408
+Average moves: 6.98631840796
+Percent gave up: 23
+Percent made it here: 64
+----------
+LEVEL 4:
+Completions: 950
+Average time: 114.257894737
+Average moves: 4.57894736842
+Percent gave up: 41
+Percent made it here: 38
+----------
+LEVEL 5:
+Completions: 464
+Average time: 47.9051724138
+Average moves: 5.1724137931
+Percent gave up: 52
+Percent made it here: 18
+----------
+LEVEL 6:
+Completions: 308
+Average time: 37.8733766234
+Average moves: 5.52597402597
+Percent gave up: 34
+Percent made it here: 12
+----------
+LEVEL 7:
+Completions: 26
+Average time: 338.384615385
+Average moves: 7.23076923077
+Percent gave up: 92
+Percent made it here: 1
+----------
+LEVEL 8:
+Completions: 8
+Average time: 71.5
+Average moves: 3.5
+Percent gave up: 70
+Percent made it here: 0
+----------
+LEVEL 9:
+Completions: 2
+Average time: 282.0
+Average moves: 7.0
+Percent gave up: 75
+Percent made it here: 0
+----------
+LEVEL 10:
+Completions: 1
+Average time: 277.0
+Average moves: 6.0
+Percent gave up: 50
+Percent made it here: 0
+----------
+LEVEL 11:
+Completions: 1
+Average time: 62.0
+Average moves: 6.0
+Percent gave up: 0
+Percent made it here: 0
+----------
+LEVEL 12:
+Completions: 2
+Average time: 261.0
+Average moves: 7.0
+Percent gave up: -100
+Percent made it here: 0
+----------
+
+Clear data

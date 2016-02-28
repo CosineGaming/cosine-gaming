@@ -23,12 +23,17 @@
             #three-column {
                 display: flex;
                 overflow: hidden;
+				flex-wrap: wrap;
             }
 
             .column {
-                padding: 0px 20px;
+                padding: 0;
                 flex: 1;
                 overflow: auto;
+            }
+
+            .padding-container {
+                padding: 5%;
             }
 
             svg {
@@ -45,9 +50,33 @@
             }
 
             .flip-ad {
-                float: right;
-                margin-top: 40px;
+                float: left;
+                /*padding-top: 40px;*/
             }
+
+			@media screen and (orientation: portrait)
+			{
+				#three-column {
+					flex-direction: column;
+				}
+				#game {
+					order: 1;
+				}
+				.column:nth-of-type(1)
+				{
+					order: 2;
+				}
+				.column:nth-of-type(3)
+				{
+					order: 3;
+				}
+			}
+
+			.padding-container, .flip-ad, .adsbygoogle {
+				width: 100%;
+				height: 100%;
+				box-sizing: border-box;
+			}
 
         </style>
 
@@ -56,41 +85,52 @@
 
         <div id="three-column">
 
+			<div class="column">
+
+				<div class="padding-container">
+
+					<nav><h1><a href="/games">Cosine Gaming</a></h1></nav>
+					<h2 class="entry-spaced">Flip</h2>
+					<p class="entry-spaced">
+						Flip is a puzzle game about reflecting.
+					</p>
+					<p class="entry-spaced">
+						When you click on a line, the blue "R" will reflect across it.
+						Try to get the blue "R" to the green one.
+						Don't land on a red "R."
+						Press R to restart.
+					</p>
+					<p class="entry-spaced">
+						You get 10 points for solving a level.
+						You get 20 if you solve it without going over the par.
+						You lose 5 points for hitting a red "R" or going out of the level,
+						and you will restart the level.
+					</p>
+					<p class="entry-spaced">
+						Your game is saved automatically.
+					</p>
+
+				</div>
+
+			</div>
+
+			<div id="game" class="column"></div>
+
             <div class="column">
-                <div class="flip-ad">
-                    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-                        <!-- Flip sidebar -->
-                        <ins class="adsbygoogle"
-                         style="display:inline-block;width:300px;height:600px"
-                         data-ad-client="ca-pub-2773641619627735"
-                         data-ad-slot="5360343802"></ins>
-                        <script>
-                        (adsbygoogle = window.adsbygoogle || []).push({});
-                    </script>
+                <div class="padding-container">
+                    <div class="flip-ad">
+						<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+						<!-- Flip (Responsive) -->
+						<ins class="adsbygoogle"
+						     style="display:block"
+						     data-ad-client="ca-pub-2773641619627735"
+						     data-ad-slot="3432483806"
+						     data-ad-format="auto"
+							 id="ad-container"></ins>
+						<script>
+						</script>
+                    </div>
                 </div>
-            </div>
-
-            <div id="game" class="column"></div>
-
-            <div class="column">
-
-                <nav><h1><a href="/games">Cosine Gaming</a></h1></nav>
-                <h2 class="entry-spaced">Flip</h2>
-                <p class="entry-spaced">
-                    Flip is a puzzle game about reflecting.
-                </p>
-                <p class="entry-spaced">
-                    Try to get the white sheep to the black one.
-                    Click on a line to reflect across it. Press R to restart.
-                </p>
-                <p class="entry-spaced">
-                    You get 20 points if you solve a level without going over the par.
-                    10 for solving one. You lose 5 points for going out of the level.
-                </p>
-                <p class="entry-spaced">
-                    Your game is saved automatically.
-                </p>
-
             </div>
 
         </div>

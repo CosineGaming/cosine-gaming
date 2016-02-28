@@ -270,10 +270,6 @@ function initializeWorld()
 
 	];
 
-	for (var i=0; i<levels.length; i++)
-	{
-	}
-
 	music = new Audio("assets/audio/edm-detection-mode.mp3");
 	music.loop = true;
 	music.play();

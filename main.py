@@ -9,6 +9,7 @@ import datetime
 import htmlmin
 import logging
 import re
+import requests
 
 from google.appengine.ext import ndb
 from Crypto.Hash import SHA256
@@ -22,13 +23,15 @@ for name, description in app.jinja_env.get_template("game-descriptions.html").bl
 
 page_size = 5
 
+week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+
 def regex(s, find, replace=""):
 	return re.sub(find, replace, s)
 
 app.jinja_env.filters['regex'] = regex
 
 class Game():
-	def __init__(self, name, file="", size=False, url="", description=""):
+	def __init__(self, name, file="", extract=False, size=False, url="", description=""):
 		self.name = name
 		# URL defaults to lowercase with hyphens instead of spaces, eg less-than-shadows
 		if url:
@@ -46,7 +49,7 @@ class Game():
 
 		# These arguments only used for Download Games
 		# If it's a zip file
-		self.extract = self.file[-4:] == ".zip"
+		self.zip = (self.file[-4:] == ".zip" or extract)
 
 		# These arguments only used for Online Games
 		self.size = size
@@ -65,16 +68,16 @@ class Game():
 	size = False
 
 games = [
-	Game("Swarm"),
 	Game("Flip"),
-	Game("Dash", "Dash.exe"),
+	Game("Swarm"),
+	Game("Dash", "https://googledrive.com/host/0B_dBpITkI8hpTjg5VWZTbWxRdXc/Dash.exe"),
 	Game("Revenge", size=[800, 595]),
-	Game("Parallel", "Parallel.zip"),
+	Game("Parallel", "https://www.dropbox.com/s/kk4imwyd9b6hewp/Parallel.zip?dl=1", extract=True),
 	Game("Less than Shadows", size=[800, 600]),
-	Game("Sniper", "Sniper.zip"),
+	Game("Sniper", "https://googledrive.com/host/0B_dBpITkI8hpTjg5VWZTbWxRdXc/Sniper.zip", extract=True),
 	Game("Ace Slicenick", size=[1000, 570]),
 	Game("Stealth", size=[475, 600]),
-	Game("Circle Wars", "CircleWars.exe")
+	Game("Circle Wars", "https://googledrive.com/host/0B_dBpITkI8hpTjg5VWZTbWxRdXc/CircleWars.exe")
 ]
 
 class Blog_Entry(ndb.Model):
@@ -103,9 +106,20 @@ class Survey_Entry(ndb.Expando):
 		return cls.query().order(-cls.date)
 
 class Flip_Data(ndb.Model):
+	count = ndb.IntegerProperty(required=False)
+	# Starting at 0
 	level = ndb.IntegerProperty(required=True)
 	time = ndb.IntegerProperty(required=True)
 	moves = ndb.IntegerProperty(required=True)
+	@classmethod
+	def query_levels(cls):
+		return cls.query().order(cls.level)
+
+class Quote(ndb.Model):
+	date = ndb.DateProperty(required=True, auto_now_add=True)
+	name = ndb.StringProperty(required=True)
+	quote = ndb.TextProperty(required=True)
+	attribution = ndb.TextProperty(required=True)
 
 def custom_render(*args, **kwargs):
 	return htmlmin.minify(render_template(*args, **kwargs))
@@ -118,7 +132,7 @@ def top_level(file):
 		if game.size:
 			return custom_render("online-game.html", game=game)
 		else:
-			return custom_render("download.html", game=game)
+			return custom_render("download.html", game=game, user_agent=request.user_agent)
 	else:
 		return custom_render(file + ".html", page=file)
 
@@ -178,13 +192,21 @@ def submit_blog_post():
 	else:
 		return custom_render("blog-writer.html", title=title, author=author, post=post, failed=True)
 
-@app.route("/contact/submit", methods=["post"])
+@app.route("/contact")
 def contact():
-	entry = Survey_Entry()
-	for key, value in request.form.iteritems():
-		setattr(entry, key, value)
-	entry.put()
-	return custom_render("contact.html", page="contact", filled_out=True)
+	return custom_render("contact.html", games=games)
+
+@app.route("/contact/submit", methods=["post"])
+def contact_submit():
+	if request.form["four"] in ["4", "four", "44", "2+2"]:
+		entry = Survey_Entry()
+		for key, value in request.form.iteritems():
+			if key != "four":
+				setattr(entry, key, value)
+		entry.put()
+		return custom_render("contact.html", filled_out=True)
+	else:
+		return custom_render("contact.html", captcha_failed=True)
 
 @app.route("/contact/view")
 def view_results():
@@ -221,56 +243,94 @@ def view_flip_data():
 			numbers.append(0)
 			times.append(0)
 			moves.append(0)
-		numbers[piece.level] += 1
-		times[piece.level] += piece.time;
-		moves[piece.level] += piece.moves;
+		if (piece.count):
+			numbers[piece.level] += piece.count
+		else:
+			numbers[piece.level] += 1
+		times[piece.level] += piece.time
+		moves[piece.level] += piece.moves
+	# Delete segmented Flip_Data. Data preserved and consolidated below
+	clear_flip_data()
 
-	rv = ""
+	levels = []
 	for i in range(len(numbers)):
 		if numbers[i] == 0:
 			continue
 		number = numbers[i]
-		time = times[i] / float(number)
-		move = moves[i] / float(number)
+		time = times[i] / number
+		move = moves[i] / number
 		gaveup = 0
 		if i != 0:
 			last = numbers[i - 1]
-			gaveup = 100 - 100 * number / last
-		madeit = number * 100 / numbers[0]
-		rv += "LEVEL " + str(i+1) + ":<br />Completions: " + str(number) +\
-			"<br />Average time: " + str(time) +\
-			"<br />Average moves: " + str(move) +\
-			"<br />Percent gave up: " + str(gaveup) +\
-			"<br />Percent made it here: " + str(madeit)
-		rv += "<br />----------<br />"
+			if last != 0:
+				gaveup = 100 - 100 * number / last
+		madeit = 0
+		if numbers[0] != 0:
+			madeit = number * 100 / numbers[0]
+		level = {}
+		level["level"] = i+1
+		level["number"] = number
+		level["time"] = time
+		level["moves"] = move
+		level["gaveup"] = gaveup
+		level["madeit"] = madeit
+		levels.append(level)
+		# Consolidates segmented Flip_Data for each level
+		data = Flip_Data(level=i, time=int(time*number), moves=int(move*number), count=number)
+		data.put()
 
-	rv += '<br /><a href="clear">Clear data</a>'
+	return custom_render("flip-data.html", levels=levels)
 
-	return rv
+# Uses level starting from 0
+def shift_flip_data(level, count):
+	data = Flip_Data.query(Flip_Data.level >= level).fetch()
+	for piece in data:
+		piece.level += count
+		piece.put()
 
-@app.route("/flip/data/clear")
+# Uses level starting from 1 as displayed in view
+# Adds <count> levels starting at <level>
+@app.route("/flip/data/add", methods=["post"])
+def shift_flip_data_page():
+	shift_flip_data(int(request.form["level"]) - 1, int(request.form["count"]))
+	return view_flip_data(), 201
+
+# Uses level starting from 1 as displayed in view
+# Deletes <count> levels starting at <level>
+@app.route("/flip/data/delete", methods=["post"])
+def delete_flip_data():
+	level = int(request.form["level"]) - 1
+	count = int(request.form["count"])
+	ndb.delete_multi(Flip_Data.query(Flip_Data.level >= level, Flip_Data.level < level + count).fetch(keys_only=True))
+	shift_flip_data(level, -count)
+	return view_flip_data(), 201
+
 def clear_flip_data():
 	ndb.delete_multi(Flip_Data.query().fetch(keys_only=True))
+
+@app.route("/flip/data/clear")
+def clear_flip_data_page():
+	clear_flip_data()
 	return view_flip_data()
 
-@app.route("/quote-alias")
-def quote():
-	class Quote:
-		name = "Day"
-		quote = "Quote"
-		attribution = "Who said it"
-		def __init__(self, name, quote, attribution):
-			self.name = name
-			self.quote = quote
-			self.attribution = attribution
-	quotes = [
-		Quote("Monday", "We live in an age where lemonade is made with artificial ingredients, yet furniture polish contains real lemon.", "J.D. Behrens"),
-		Quote("Tuesday", "Whoever submitted the quote \"wow,\" by Doge ...", "NO"),
-		Quote("Wednesday", "This isn't your average, everyday stupid . . . this is . . . ADVANCED STUPID.", "Patrick Star"),
-		Quote("Thursday", "If you would like to have your name written in Gallifreyan, leave your full name and address in the comments section above.", "QuoteMaster"),
-		Quote("Friday", "My dad beats me . . . at tic-tac-toe . . . with his belt.", "James Murray")
-	]
+@app.route("/quote")
+def quote_page():
+	quotes = Quote.query().order(-Quote.date).fetch()
 	return custom_render("quote.html", quotes=quotes)
+
+@app.route("/quote/write", methods=["get"])
+def write_quote():
+	return custom_render("write-quote.html", week=week, wrote=request.args.get("wrote"))
+
+@app.route("/quote/write", methods=["post"])
+def write_quote_data():
+	name = request.form.get("day")
+	quote = request.form.get("quote")
+	attribution = request.form.get("attribution")
+	if quote:
+		full = Quote(name=name, quote=quote, attribution=attribution)
+		full.put()
+	return redirect("/quote/write?wrote=True")
 
 @app.route("/swarm/")
 def swarm_title():

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<style>
+		ol {
+			list-style: none;
+			padding: 0;
+		}
+		ul {
+			list-style: none;
+			padding: 0;
+		}
+	</style>
+</head>
+<body>
+
+	<ol>
+	{% for level in levels %}
+		<li>LEVEL {{ level.level }}:<ul>
+			<li>Completions: {{ level.number }}</li>
+			<li>Average time: {{ level.time }}</li>
+			<li>Average moves: {{ level.moves }}</li>
+			<li>Percent gave up: {{ level.gaveup }}</li>
+			<li>Percent made it here: {{ level.madeit }}</li>
+		</ul></li>
+		<hr />
+	{% endfor %}
+	</ol>
+	<br />
+	
+	<a href="/flip/data/clear">Clear data</a><br />
+	<br />
+	<form method="post" action="/flip/data/add">
+		Level: <input type="number" name="level" value="1" /><br />
+		Count: <input type="number" name="count" value="1" /><br />
+		<input type="submit" value="Add Levels" />
+	</form>
+	<br />
+	<form method="post" action="/flip/data/delete">
+		Level: <input type="number" name="level" value="1" /><br />
+		Count: <input type="number" name="count" value="1" /><br />
+		<input type="submit" value="Delete Levels" />
+	</form>
+
+</body>
+</html>

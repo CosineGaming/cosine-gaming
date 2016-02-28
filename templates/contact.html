@@ -24,29 +24,23 @@
 			<p style="font-weight: bold; font-size: 26px;" class="highlight">Thank you for providing the information that helps us improve Cosine Gaming for you.</p>
 			<br />
 		{% endif %}
+		{% if captcha_failed %}
+			<p style="font-weight: bold; font-size: 26px;" class="highlight">2+2=4. Please type "4" in the box so we know you're not a spammer. Thanks.</p>
+			<br />
+		{% endif %}
 
 		<p style="font-size: 26px;" class="bottom-spaced">All entries are optional.</p>
 
 		<form name="survey" action="/contact/submit" method="post">
 
 			<p>What is your favorite game you've played on Cosine Gaming?</p>
-			<input type="radio" name="favorite-game" value="Dash" id="DashFav" />               <label for="DashFav">Dash</label>
-			<input type="radio" name="favorite-game" value="Less than Shadows" id="LTSFav" />   <label for="LTSFav">Less than Shadows</label>
-			<input type="radio" name="favorite-game" value="Parallel" id="ParallelFav" />       <label for="ParallelFav">Parallel</label>
-			<input type="radio" name="favorite-game" value="Revenge" id="RevengeFav" />         <label for="RevengeFav">Revenge</label>
-			<input type="radio" name="favorite-game" value="Sniper" id="SniperFav" />           <label for="SniperFav">Sniper</label>
-			<input type="radio" name="favorite-game" value="Ace Slicenick" id="SlicenickFav" /> <label for="SlicenickFav">Ace Slicenick</label>
-			<input type="radio" name="favorite-game" value="Stealth" id="StealthFav" />         <label for="StealthFav">Stealth</label>
-			<input type="radio" name="favorite-game" value="Circle Wars" id="CWFav" />          <label for="CWFav">Circle Wars</label>
+			{% for game in games %}
+				<input type="radio" name="favorite-game" value="{{ game.name }}" id="{{ game.url }}-best" /><label for="{{ game.url }}-best">{{ game.name }}</label>
+			{% endfor %}
 			<p style="padding-top: 40px;">Least Favorite?</p>
-			<input type="radio" name="least-favorite-game" value="Dash" id="DashWorst" />                <label for="DashWorst">Dash</label>
-			<input type="radio" name="least-favorite-game" value="Less than Shadows" id="LTSWorst" />    <label for="LTSWorst">Less than Shadows</label>
-			<input type="radio" name="least-favorite-game" value="Parallel" id="ParallelWorst" />        <label for="ParallelWorst">Parallel</label>
-			<input type="radio" name="least-favorite-game" value="Revenge" id="RevengeWorst" />          <label for="RevengeWorst">Revenge</label>
-			<input type="radio" name="least-favorite-game" value="Sniper" id="SniperWorst" />            <label for="SniperWorst">Sniper</label>
-			<input type="radio" name="least-favorite-game" value="Ace Slicenick" id="SlicenickWorst" />  <label for="SlicenickWorst">Ace Slicenick</label>
-			<input type="radio" name="least-favorite-game" value="Stealth" id="StealthWorst" />          <label for="StealthWorst">Stealth</label>
-			<input type="radio" name="least-favorite-game" value="Circle Wars" id="CWWorst" />           <label for="CWWorst">Circle Wars</label>
+			{% for game in games %}
+				<input type="radio" name="least-favorite-game" value="{{ game.name }}" id="{{ game.url }}-worst" /><label for="{{ game.url }}-worst">{{ game.name }}</label>
+			{% endfor %}
 			<p style="padding-top: 40px;">What are some things that could be added to a game?</p>
 			<textarea name="change-in-game"></textarea>
 			<p style="padding-top: 40px;">Any suggestions for a new game you'd like to see?</p>
@@ -74,6 +68,8 @@
 			<br>
 			<span style="padding-top: 40px;">If you'd like to sign up for the Cosine Gaming newsletter, enter your email here:</span>
 			<input type="email" name="email" />
+			<br>
+			2+2=? <input type="text" name="four" required />
 			<br>
 			<input type="submit" value="Submit" style="display: block; margin-top: 20px;" />
 

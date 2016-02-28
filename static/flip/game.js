@@ -12,12 +12,16 @@ var level = null;
 var levelLines = null;
 var lineGroup = null;
 
+var levelObstacles = null;
+var obstacleGroup = null;
+
 var moves = null;
 var score = null;
 
 var movesText = null;
 var parText = null;
 var onParText = null;
+var offLevelText = null;
 var levelText = null;
 var scoreText = null;
 
@@ -28,10 +32,11 @@ var tweenDelta = null;
 var tweenHandle = null;
 
 var startedTime = null;
+var resizeTimer = null;
 
-var version = "0.1";
+var version = "0.2";
 
-var firefoxBlurFix = 1;
+var playerSize = 8;
 
 function initialize()
 {
@@ -43,23 +48,67 @@ function initialize()
     container.addEventListener("keyup", pressed);
     container.focus();
 
-    resize();
-    window.onresize = resize;
+	resize();
+    window.onresize = resizeCallback;
 
     game = SVG("game").viewbox(0,0,100,100);
+    var gridStyle = { color: "#BBB", width: 0.2 };
+    for (var i=0; i<100; i+=10)
+    {
+        game.line(i, 0, i, 100).stroke(gridStyle);
+        game.line(0, i, 100, i).stroke(gridStyle);
+    }
     lineGroup = game.group();
-    var playerSize = 8 * firefoxBlurFix;
-    player = game.image("/static/flip/assets/player.svg", playerSize, playerSize);
-    answer = game.image("/static/flip/assets/target.svg", playerSize, playerSize);
-    reset = game.image("/static/flip/assets/reset.svg", 6, 6).move(72, 4);
+	obstacleGroup = game.group();
+    answer = game.image("/static/flip/assets/target.svg", playerSize);
+    player = game.image("/static/flip/assets/player.svg", playerSize);
+    reset = game.image("/static/flip/assets/reset.svg", 6).move(72, 4);
+
+	initText();
 
     score = 0;
+
     startTime = new Date();
 
     if (!loadLevel())
     {
         setLevel(0);
     }
+
+}
+
+function initText()
+{
+
+    var font = ({ family: "Palatino Linotype", size: 3 });
+
+    movesText = game.text("");
+    movesText.font(font);
+    movesText.move(80, 2);
+
+    parText = game.text("");
+    parText.font(font);
+    parText.move(80, 6);
+
+    onParText = game.text("");
+    onParText.font(font);
+    onParText.move(80, 10);
+
+    offLevelText = game.text("YOU DIED. RESTARTING LEVEL.")
+    offLevelText.font(font);
+    offLevelText.style("fill", "#000");
+    offLevelText.style("stroke", "#FFF");
+    offLevelText.style("stroke-width", "0.05");
+    offLevelText.style("font-size", "15");
+    offLevelText.move(10, 90);
+
+    levelText = game.text("");
+    levelText.font(font);
+    levelText.move(4, 2);
+
+    scoreText = game.text("");
+    scoreText.font(font);
+    scoreText.move(4, 6);
 
 }
 
@@ -79,68 +128,49 @@ function setLevel(lvl)
     lastLine = null;
 
     matrix = numeric.identity(3);
-    numeric.diveq(matrix, firefoxBlurFix);
     skipTween();
 
     moves = 0;
-    var font = ({ family: "Palatino Linotype", size: 3 });
-    if (movesText == null)
-    {
-        movesText = game.text("");
-        movesText.font(font);
-        movesText.x(80);
-        movesText.y(2);
-    }
-    if (parText == null)
-    {
-        parText = game.text("");
-        parText.font(font);
-        parText.x(80)
-        parText.y(6);
-    }
-    if (onParText == null)
-    {
-        onParText = game.text("ON PAR!");
-        onParText.font(font);
-        onParText.x(80);
-        onParText.y(10);
-    }
-    if (levelText == null)
-    {
-        levelText = game.text("");
-        levelText.font(font);
-        levelText.x(4);
-        levelText.y(2);
-    }
-    if (scoreText == null)
-    {
-        scoreText = game.text("");
-        scoreText.font(font);
-        scoreText.x(4);
-        scoreText.y(6);
-    }
     var par = levels[level].par;
     if (!par)
     {
         par = "Unsolved"
     }
-    parText.text("PAR: " + par);
+    parText.text("TARGET: " + par);
     onParText.hide();
+    offLevelText.hide();
     levelText.text("LEVEL: " + (level + 1));
+
+	levelObstacles = [];
+	obstacleGroup.clear();
 
     var pos = levels[level].player;
     if (pos)
     {
-        player.x(pos[0]*firefoxBlurFix);
-        player.y(pos[1]*firefoxBlurFix);
+
+        player.x(pos[0]);
+        player.y(pos[1]);
         answer.x(pos[0]);
         answer.y(pos[1]);
+
+		if (typeof levels[level].obstacles != "undefined")
+		{
+			for (var i=0; i<levels[level].obstacles.length; i++)
+			{
+				levelObstacles.push(obstacleGroup.image("/static/flip/assets/obstacle.svg", playerSize).move(pos[0], pos[1]));
+			}
+		}
+
     }
 
     if (levels[level].answer)
     {
         answer.transform("matrix", transformString(levels[level].answer));
     }
+	for (var i=0; i<levelObstacles.length; i++)
+	{
+		levelObstacles[i].transform("matrix", transformString(levels[level].obstacles[i]));
+	}
 
     redraw();
 
@@ -158,19 +188,30 @@ function loadLevel()
     {
 
         score = parseInt(localStorage.getItem("score"));
-        var oldLevel = parseInt(localStorage.getItem("level"));
+        level = parseInt(localStorage.getItem("level"));
         var parts = saveVersion.split(".");
         var thisVersionParts = version.split(".");
+        // The first number indicates irreversable save file changes
         if (parts[0] == thisVersionParts[0])
         {
+            // The second number are changes that are fixable
+            // (eg adding two levels between 6 and 7)
             if (parts[1] == 0)
             {
-                if (oldLevel >= 7)
+                if (level >= 7)
                 {
-                    oldLevel += 2;
+                    level += 2;
                 }
             }
-            setLevel(oldLevel);
+            if (parts[1] == 1)
+            {
+                level = 0;
+                if (score < 0)
+                {
+                    score = 0;
+                }
+            }
+            setLevel(level);
             return true;
         }
         else
@@ -241,6 +282,13 @@ function getLine(x, y)
 
 }
 
+function lose()
+{
+	score -= 5;
+	offLevelText.show();
+	setTimeout(setLevel, 2000, level);
+}
+
 function clicked(e)
 {
 
@@ -274,22 +322,33 @@ function clicked(e)
             var center = numeric.dot(matrix, [player.x() + 4, player.y() + 4, 1]);
             if (center[0] < 0 || center[0] > 100 || center[1] < 0 || center[1] > 100)
             {
-                score -= 5;
-                setTimeout(setLevel, 1000, level);
+				lose();
             }
+			if (typeof levels[level].obstacles != "undefined")
+			{
+				for (var i=0; i<levels[level].obstacles.length; i++)
+				{
+					if (matEq(matrix, levels[level].obstacles[i]))
+					{
+						lose();
+					}
+				}
+			}
             if (matEq(matrix, levels[level].answer))
             {
                 sendData();
-                if (moves == levels[level].par)
+                onParText.show();
+                if (moves <= levels[level].par)
                 {
-                    onParText.show();
+					onParText.text("ON PAR!")
                     score += 20;
                 }
                 else
                 {
+					onParText.text("COMPLETED!")
                     score += 10;
                 }
-                setTimeout(setLevel, 1000, level + 1);
+                setTimeout(setLevel, 2500, level + 1);
             }
 
             redraw();
@@ -329,7 +388,7 @@ function hovered(e)
 function pressed(e)
 {
 
-    if (e.keyCode == "=".charCodeAt(0))
+    if (e.keyCode == "B".charCodeAt(0))
     {
         out = "["
         for (var x=0; x<3; x++)
@@ -444,7 +503,7 @@ function skipTween()
 
 function matEq(a, b)
 {
-    var epsilon = 0.0001;
+    var epsilon = 0.001;
     for (var x=0; x<3; x++)
     {
         for (var y=0; y<3; y++)
@@ -458,7 +517,7 @@ function matEq(a, b)
             diff = Math.abs(c - d)
             if (c == 0 || d == 0)
             {
-                if (diff < epsilon * 0.0001)
+                if (diff < epsilon * epsilon)
                 {
                     continue;
                 }
@@ -500,10 +559,25 @@ function gameY(windowY)
 
 function resize()
 {
-    size = window.innerHeight;
+    size = Math.min(window.innerWidth, window.innerHeight);
     container.style.width = size + "px";
     container.style.height = size + "px";
-    document.getElementById("three-column").style.height = size + "px";
+    document.getElementById("three-column").style.height = window.innerHeight + "px";
+	var adcontainer = document.getElementById("ad-container");
+	adcontainer.innerHTML = "";
+	adcontainer.style.width = "100%";
+	adcontainer.style.height = "100%";
+	delete adcontainer.dataset["adsbygoogleStatus"];
+	(adsbygoogle = window.adsbygoogle || []).push({});
+}
+
+function resizeCallback()
+{
+	if (resizeTimer)
+	{
+		clearTimeout(resizeTimer);
+	}
+	resizeTimer = setTimeout(resize, 250);
 }
 
 function sendData()

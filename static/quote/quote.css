@@ -47,7 +47,7 @@ section {
 
 section:last-of-type { border: none; }
 
-h2 {
+.day {
     color: #F90;
     font-size: 37px;
     font-family: Quattrocento;
@@ -93,14 +93,43 @@ footer {
     font-size: 25px;
 }
 
-footer a {
+a {
     color: #0FF;
 }
 
-footer a:hover {
+a:hover {
     color: #F90;
 }
 
-footer a:active {
+a:active {
+    color: #9FC5E8;
+}
+
+textarea {
+    background-color: #674EA7;
+    border: solid #F0F 3px;
+    width: 100%;
+}
+
+input[type="text"] {
+    background-color: #674EA7;
+    border: solid #F0F 3px;
+}
+
+input[type="submit"] {
+    width: 100%;
+    margin-top: 20px;
+    padding: 20px;
+    font-size: 37px;
+    background-color: #674EA7;
+    border: solid #F0F 3px;
+    color: #0FF;
+}
+
+input[type="submit"]:hover {
+    color: #F90;
+}
+
+input[type="submit"]:active {
     color: #9FC5E8;
 }
