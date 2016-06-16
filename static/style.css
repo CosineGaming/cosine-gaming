@@ -42,8 +42,6 @@ Highlight: #f698ec
 }
 
 body {
-	background-color: #00010f;
-	color: #d3e4f9;
 	text-align: justify;
 	font-size: 20px;
 	font-weight: 100;
@@ -52,13 +50,13 @@ body {
 
 a {
 	text-decoration: none;
-	color: #f698ec;
+	color: #0d3365;
 	font-family: Libertine, serif;
 	transition: color 0.5s;
 }
 
 a:hover {
-	color: #d3e4f9;
+	color: #081e4b;
 }
 
 a:active {
@@ -95,7 +93,7 @@ li {
 }
 
 .highlight {
-	color: #f698ec;
+	color: #0d3365;
 }
 
 .wrap {
@@ -135,7 +133,7 @@ li {
 nav {
 	overflow: hidden;
 	width: 100%;
-	border-bottom: 3px solid #d3e4f9;
+	border-bottom: 3px solid #0d3365;
 }
 
 	nav ul {
@@ -152,7 +150,7 @@ nav {
 		}
 
 		nav ul #active a {
-			color: #d3e4f9;
+			color: black;
 		}
 
 	nav h1 {
