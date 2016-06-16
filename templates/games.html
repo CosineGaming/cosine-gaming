@@ -11,15 +11,17 @@
 
 		ul.game-list {
 			width: 100%;
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: space-around;
+			transition: flex-wrap;
 		}
 
 		ul.game-list li {
-			display: inline-block;
-			float: left;
 			position: relative;
-			margin: 20px 15px;
-			width: 600px;
 			height: 250px;
+			width: 630px;
+			margin: 25px 0;
 			text-decoration: none;
 			box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
 			transition: box-shadow 0.3s, opacity 0.3s;
@@ -36,8 +38,6 @@
 			ul.game-list li a div {
 				position: absolute;
 				overflow: hidden;
-				/*margin: 0 5%;
-				width: 90%;*/
 				width: 100%;
 				height: 250px;
 				z-index: 1;
@@ -71,6 +71,7 @@
 			}
 
 			ul.game-list li a div p.label {
+				display: none;
 				position: absolute;
 				left: 50%;
 				color: #f698ec;
@@ -167,5 +168,7 @@
 			</a>
 		</li>
 		{% endfor %}
+
+	</ul>
 
 {% endblock main %}
