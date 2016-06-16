@@ -305,12 +305,12 @@ function initializeLevel()
 	var resistance = 0.99
     var big = new Entity("assets/big.png", 0, 0, updateBig, "big", "big", speed, resistance);
 	big.aggressive = true;
-	big.maxHealth = 1050 + 300 * level;
+	big.maxHealth = 1000 + 373 * level;
 	big.health = big.maxHealth;
 	big.spawnSafe();
 	levels[level].entities.big = big;
 
-    for (var i=0; i < 14+level*5; i++)
+    for (var i=0; i < 10+level*4; i++)
     {
 
 		var acc = 6000;
