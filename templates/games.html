@@ -136,13 +136,10 @@
 	</style>
 
 	<script>
-
 		if ("ontouchstart" in document.documentElement)
 		{
-
 			function showLabelsWhenScrolled()
 			{
-
 				// From http://stackoverflow.com/a/22480938/1556332 Thanks! Lifesaver
 				function isScrolledIntoView(el)
 				{
@@ -152,13 +149,10 @@
 					var isVisible = (elemTop >= 0) && (elemBottom <= window.innerHeight);
 					return isVisible;
 				}
-
 				window.gameImages = document.getElementsByClassName("game-image");
 				window.gameLabels = document.getElementsByClassName("description");
-
 				function checkLabels()
 				{
-
 					for (var i=0; i<gameImages.length; i++)
 					{
 						if (isScrolledIntoView(gameImages[i]))
@@ -172,16 +166,11 @@
 							gameLabels[i].style.opacity = "0";
 						}
 					}
-
 				}
-
 				setInterval(checkLabels, 500);
-
 			}
-
 			document.addEventListener("DOMContentLoaded", showLabelsWhenScrolled);
 		}
-
 	</script>
 
 {% endblock head %}
