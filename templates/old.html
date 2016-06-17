@@ -1,0 +1,216 @@
+{% extends "standard.html" %}
+
+{% block title %}Cosine Gaming{% endblock %}
+{% block description %}Cosine Gaming makes free indie games. Play puzzle games, platformers, RPGs, and others online or downloaded.{% endblock %}
+
+{% block head %}
+
+	{{ super() }}
+
+	<style>
+
+		ul.game-list {
+			width: 100%;
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: space-around;
+			margin: 0 15px;
+			box-sizing: border-box;
+		}
+
+		ul.game-list li {
+			position: relative;
+			height: 250px;
+			width: 630px;
+			margin: 25px 0;
+			overflow: hidden;
+			text-decoration: none;
+			background-color: white;
+			box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
+			transition: box-shadow 0.3s, opacity 0.3s;
+		}
+
+		ul.game-list li:hover {
+			box-shadow: 0 4px 10px 0 rgba(0,0,0,.26);
+		}
+
+		ul.game-list li:active {
+			background-color: #d3e4f9;
+		}
+
+			ul.game-list li a div {
+				position: absolute;
+				width: 100%;
+				height: 250px;
+				z-index: 1;
+				background-position: center top;
+				background-repeat: no-repeat;
+				opacity: 1;
+				transition: opacity 0.3s;
+			}
+
+			ul.game-list li:hover a div {
+				opacity: 0.2;
+			}
+
+			ul.game-list li a p.description {
+				position: absolute;
+				left: 0;
+				right: 0;
+				top: 55px;
+				max-width: 600px;
+				width: 100%; /* This fixes a weird fluke in IE's text-align */
+				margin: 0 auto;
+				text-align: center;
+				/* Text on top of image */
+				z-index: 2;
+				color: black;
+				opacity: 0;
+				transition: opacity 0.3s;
+			}
+
+			ul.game-list li:hover a p.description {
+				opacity: 1;
+			}
+
+			ul.game-list li a div p.label {
+				display: none;
+				position: absolute;
+				left: 50%;
+				color: #f698ec;
+				font-family: Libertine, serif;
+			}
+
+		/* List of labels's positions, padding-left offsets text's position from the center */
+		#swarm-label {
+			top: 75px;
+			margin-left: -570px;
+			font-size: 150px;
+		}
+		#flip-label {
+			top: 150px;
+			margin-left: -350px;
+			font-size: 130px;
+		}
+		#dash-label {
+			top: 150px;
+			margin-left: 200px;
+			font-size: 120px;
+		}
+		#less-than-shadows-label {
+			top: 80px;
+			margin-left: -40px;
+			font-size: 60px;
+		}
+		#parallel-label {
+			top: 300px;
+			margin-left: -175px;
+			font-size: 100px;
+		}
+		#revenge-label {
+			top: 390px;
+			margin-left: -145px;
+			font-size: 80px;
+		}
+		#sniper-label {
+			top: 380px;
+			margin-left: -120px;
+			font-size: 100px;
+		}
+		#ace-slicenick-label {
+			top: 285px;
+			margin-left: -250px;
+			font-size: 90px;
+		}
+		#stealth-label {
+			top: 375px;
+			margin-left: -175px;
+			font-size: 110px;
+		}
+		#circle-wars-label {
+			top: 230px;
+			margin-left: -125px;
+			font-size: 75px;
+		}
+
+	</style>
+
+	<script>
+		if ("ontouchstart" in document.documentElement)
+		{
+			function showLabelsWhenScrolled()
+			{
+				// From http://stackoverflow.com/a/22480938/1556332 Thanks! Lifesaver
+				function isScrolledIntoView(el)
+				{
+					var elemTop = el.getBoundingClientRect().top;
+					var elemBottom = el.getBoundingClientRect().bottom;
+
+					var isVisible = (elemTop >= 0) && (elemBottom <= window.innerHeight);
+					return isVisible;
+				}
+				window.gameImages = document.getElementsByClassName("game-image");
+				window.gameLabels = document.getElementsByClassName("description");
+				function checkLabels()
+				{
+					for (var i=0; i<gameImages.length; i++)
+					{
+						if (isScrolledIntoView(gameImages[i]))
+						{
+							gameImages[i].style.opacity = "0.2";
+							gameLabels[i].style.opacity = "1";
+						}
+						else
+						{
+							gameImages[i].style.opacity = "1";
+							gameLabels[i].style.opacity = "0";
+						}
+					}
+				}
+				setInterval(checkLabels, 500);
+			}
+			document.addEventListener("DOMContentLoaded", showLabelsWhenScrolled);
+		}
+	</script>
+
+{% endblock head %}
+
+{% block main %}
+
+	<div style="display: inline-block; margin-bottom: 0;" class="card entry-spaced">
+		<p style="font-size: 36px;">Cosine Gaming makes free indie games.</p>
+		<p class="bottom-spaced">
+			Scroll down for a list of games, some online for all platforms, some for Windows only.
+			Hover over each game for a description. Click one to play it.
+		</p>
+		<div class="horizontal-ad">
+			<p>Advertisement</p>
+			<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+				<!-- Flip (Responsive) -->
+				<ins class="adsbygoogle"
+					 style="display:block"
+					 data-ad-client="ca-pub-2773641619627735"
+					 data-ad-slot="3432483806"
+					 data-ad-format="auto"></ins>
+				<script>
+				(adsbygoogle = window.adsbygoogle || []).push({});
+			</script>
+		</div>
+	</div>
+
+	<ul class="game-list">
+
+		{% for game in games %}
+		<li>
+			<a href="/{{ game.url }}">
+				<div style="background-image: url(/static/game-links/{{ game.url }}.png);" class="game-image">
+					<p class="label" id="{{ game.url }}-label">{{ game.name }}</p>
+				</div>
+				<p class="description">{{ game.description }}</p>
+			</a>
+		</li>
+		{% endfor %}
+
+	</ul>
+
+{% endblock main %}

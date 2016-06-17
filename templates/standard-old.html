@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+	<head>
+
+		{% block head %}
+
+			<meta charset="utf-8" />
+			<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+			<link rel="stylesheet" href="/static/style-old.css" />
+			<link rel="shortcut icon" href="/static/favicon.ico" />
+
+			<title>{% block title %}{% endblock %}</title>
+			<meta name="description" content="{% block description %}{% endblock %}" />
+
+			<!-- Analytics -->
+			<script>
+			  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		  		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+				m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+			  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+				ga('create', 'UA-34278226-1', 'cosinegaming.com');
+				ga('send', 'pageview');
+
+			</script>
+			<!-- End Analytics -->
+
+			<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+			<script>
+			  (adsbygoogle = window.adsbygoogle || []).push({
+			    google_ad_client: "ca-pub-2773641619627735",
+			    enable_page_level_ads: true
+			  });
+			</script>
+
+		{% endblock %}
+
+	</head>
+
+	<body>
+
+		<nav>
+			<ul>
+				<li{% if page == "games" %} id="active"{% endif %}><a href="/games">Games</a></li>
+				<li{% if page == "about" %} id="active"{% endif %}><a href="/about">About Us</a></li>
+				<li{% if page == "beta"  %} id="active"{% endif %}><a href="/beta">Beta Projects</a></li>
+				<li{% if page == "blog"  %} id="active"{% endif %}><a href="/blog/">Blog</a></li>
+			</ul>
+			<h1><a href="/games">Cosine Gaming</a></h1>
+		</nav>
+
+		<main>
+
+			{% block main %}{% endblock %}
+
+		</main>
+
+		<footer class="card" style="padding: 0 0 25px 0;">
+
+			{% block footer %}
+
+				<div id="triangles"></div><script src="/static/triangles.js"></script>
+
+				<p style="font-size: 36px">Cosine gaming makes <a href="/games">free indie games</a>.</p>
+
+				<div class="horizontal-ad">
+					<p>Advertisement</p>
+					<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+						<!-- Flip (Responsive) -->
+						<ins class="adsbygoogle"
+						     style="display:block"
+						     data-ad-client="ca-pub-2773641619627735"
+						     data-ad-slot="3432483806"
+						     data-ad-format="auto"></ins>
+						<script>
+						(adsbygoogle = window.adsbygoogle || []).push({});
+					</script>
+				</div>
+
+				<p class="bottom-spaced">
+					Please take our <a href="/contact">survey</a>!
+				</p>
+
+				<p>Questions about privacy? You have it here. Want more information? Read our <a href="/privacy">privacy policy</a>.</p>
+
+			{% endblock footer %}
+
+		</footer>
+
+	</body>
+
+</html>
+
+<!-- By Cosine Gaming -->
