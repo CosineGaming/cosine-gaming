@@ -14,7 +14,8 @@
 			display: flex;
 			flex-wrap: wrap;
 			justify-content: space-around;
-			transition: flex-wrap;
+			padding: 15px;
+			box-sizing: border-box;
 		}
 
 		ul.game-list li {
@@ -63,6 +64,7 @@
 				text-align: center;
 				/* Text on top of image */
 				z-index: 2;
+				color: black;
 				opacity: 0;
 				transition: opacity 0.3s;
 			}
@@ -137,7 +139,7 @@
 
 {% block main %}
 
-	<div style="border-bottom: 3px solid #d3e4f9; text-align: center; padding: 30px;">
+	<div style="text-align: center; padding: 30px;">
 		<p style="font-size: 36px;">Cosine Gaming makes free indie games.</p>
 		<p class="bottom-spaced">
 			Scroll down for a list of games, some online for all platforms, some for Windows only.

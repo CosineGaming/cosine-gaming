@@ -5,7 +5,7 @@
 function addTriangle()
 {
 	var triangle = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-	triangle.style.stroke = ["#d3e4f9", "#f698ec"][Math.floor(Math.random()*2)];
+	triangle.style.stroke = ["#000000", "#0066a7"][Math.floor(Math.random()*2)];
 	triangle.style.strokeWidth = "2";
 	triangle.style.fill = "none";
 	var holder = document.getElementById("triangles-loader");
