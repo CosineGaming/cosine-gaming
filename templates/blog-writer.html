@@ -8,33 +8,34 @@
 
 	<div class="wrap">
 
-		<h2 class="entry-spaced">
-			<a href="/blog/">Cosine Gaming Blog</a>
-		</h2>
-		<p style="font-size: 25px; margin-bottom: 40px;">A Blog about games, new CG projects, and more.</p>
-
-		{% if failed %}
-			<p style="font-weight: bold; font-size: 26px;" class="highlight">
-				Sorry, wrong password. Try again.
-			</p>
-			<br />
-		{% endif %}
-
-		<div class="horizontal-ad" style="width: 468px;">
-			<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+		<div class="card">
+			<h2>
+				<a href="/blog/">Cosine Gaming Blog</a>
+			</h2>
+			<p style="font-size: 25px;" class="bottom-spaced">A Blog about games, new CG projects, and more.</p>
+			<div class="horizontal-ad" style="width: 468px;">
+				<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 				<!-- Short wide banner -->
 				<ins class="adsbygoogle"
-				     style="display:inline-block;width:468px;height:60px"
-				     data-ad-client="ca-pub-2773641619627735"
-				     data-ad-slot="6180957807"></ins>
+				style="display:inline-block;width:468px;height:60px"
+				data-ad-client="ca-pub-2773641619627735"
+				data-ad-slot="6180957807"></ins>
 				<script>
 				(adsbygoogle = window.adsbygoogle || []).push({});
-			</script>
+				</script>
+			</div>
 		</div>
 
-		<div class="entry-spaced"></div>
+		<div>
+			{% if failed %}
+				<p style="font-weight: bold; font-size: 26px;" class="highlight">
+					Sorry, wrong password. Try again.
+				</p>
+				<br />
+			{% endif %}
+		</div>
 
-		<form method="post" action="">
+		<form method="post" action="" class="card">
 
 			Password: <input type="password" name="password" required />
 			<br />

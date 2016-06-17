@@ -30,31 +30,32 @@
 
 	<div class="wrap">
 
-		<h2 class="entry-spaced">
-			<a href="/blog/">Cosine Gaming Blog</a>
-		</h2>
-		<p style="font-size: 25px; margin-bottom: 40px;">A Blog about games, new CG projects, and more.</p>
-
-		{% if filled_out %}
-			<p style="font-weight: bold; font-size: 26px;" class="highlight">
-				Post submitted. Thanks for blogging!
-			</p>
-			<br />
-		{% endif %}
-
-		<div class="horizontal-ad" style="width: 468px;">
-			<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+		<div class="card">
+			<h2 class="entry-spaced">
+				<a href="/blog/">Cosine Gaming Blog</a>
+			</h2>
+			<p style="font-size: 25px;" class="bottom-spaced">A Blog about games, new CG projects, and more.</p>
+			<div class="horizontal-ad" style="width: 468px;">
+				<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 				<!-- Short wide banner -->
 				<ins class="adsbygoogle"
-				     style="display:inline-block;width:468px;height:60px"
-				     data-ad-client="ca-pub-2773641619627735"
-				     data-ad-slot="6180957807"></ins>
+				style="display:inline-block;width:468px;height:60px"
+				data-ad-client="ca-pub-2773641619627735"
+				data-ad-slot="6180957807"></ins>
 				<script>
 				(adsbygoogle = window.adsbygoogle || []).push({});
-			</script>
+				</script>
+			</div>
 		</div>
 
-		<div class="entry-spaced"></div>
+		{% if filled_out %}
+			<div class="card">
+				<p style="font-weight: bold; font-size: 26px;" class="highlight">
+					Post submitted. Thanks for blogging!
+				</p>
+				<br />
+			</div>
+		{% endif %}
 
 		{% macro string_date(entry) %}{{ entry.date.strftime("%Y-%m-%d") }}{% endmacro %}
 
@@ -71,22 +72,22 @@
 			{% if not full %}
 
 				{% if blog_page > 1 %}
-					<a href="/blog/page/{{ blog_page - 1 }}/" class="pagination" style="float: left;"><< Newer Posts</a>
+					<a href="/blog/page/{{ blog_page - 1 }}/" class="pagination card" style="float: left;">< Newer Posts</a>
 				{% endif %}
 
 				{% if entries[-1].index > 0 %}
-					<a href="/blog/page/{{ blog_page + 1 }}/" class="pagination" style="float: right;">Older Posts >></a>
+					<a href="/blog/page/{{ blog_page + 1 }}/" class="pagination card" style="float: right;">Older Posts ></a>
 				{% else %}
-					<p class="pagination" style="float: right;">No older posts</p>
+					<p class="pagination card" style="float: right; background-color: ">No older posts</p>
 				{% endif %}
 
 			{% else %}
 
-				<a href="/blog/page/{{ blog_page }}/#{{ url_title(entries[0]) }}" class="pagination">Return to feed</a>
+				<a href="/blog/page/{{ blog_page }}/#{{ url_title(entries[0]) }}" class="pagination card" style="float: left;">Return to feed</a>
 
 			{% endif %}
 
-			<div style="clear: both; margin-bottom: 40px;" /></div>
+			<div style="clear: both;" /></div>
 
 		{% endmacro %}
 
@@ -94,9 +95,9 @@
 
 		{% for entry in entries %}
 
-			<article style="margin-bottom: 80px;">
+			<article class="card">
 				<h3>
-					<a href="{{ url(entry) }}" name="{{ url_title(entry) }}">{{ entry.title }}</a>
+					<a href="{{ url(entry) }}" name="{{ url_title(entry) }}" style="padding-top: 50px; margin-top: -50px;">{{ entry.title }}</a>
 				</h3>
 				<p class="byline">
 					<time datetime="{{ string_date(entry) }}" pubdate>

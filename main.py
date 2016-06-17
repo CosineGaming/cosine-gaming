@@ -194,19 +194,19 @@ def submit_blog_post():
 
 @app.route("/contact")
 def contact():
-	return custom_render("contact.html", games=games)
+	return custom_render("contact.html", games=games, responses={})
 
 @app.route("/contact/submit", methods=["post"])
 def contact_submit():
-	if request.form["four"] in ["4", "four", "44", "2+2"]:
+	if request.form["four"] in ["4", "four", "fourr", "44", "2+2"]: #Oh you're so clever, aren't you, "2+2"
 		entry = Survey_Entry()
 		for key, value in request.form.iteritems():
 			if key != "four":
 				setattr(entry, key, value)
 		entry.put()
-		return custom_render("contact.html", filled_out=True)
+		return custom_render("contact.html", filled_out=True, games=games, responses=request.form)
 	else:
-		return custom_render("contact.html", captcha_failed=True)
+		return custom_render("contact.html", captcha_failed=True, games=games, responses=request.form)
 
 @app.route("/contact/view")
 def view_results():

@@ -16,68 +16,84 @@
 
 	<div class="wrap">
 
-		<h2 class="entry-spaced bottom-spaced">
-			Fill out our survey to help us improve
-		</h2>
+		<div class="card">
+			<h2 class="bottom-spaced">
+				Fill out our survey to help us improve
+			</h2>
+			<p style="font-size: 26px;">All entries are optional.</p>
+		</div>
 
 		{% if filled_out %}
-			<p style="font-weight: bold; font-size: 26px;" class="highlight">Thank you for providing the information that helps us improve Cosine Gaming for you.</p>
-			<br />
+			<div class="slide-in card">
+				<p style="font-weight: bold; font-size: 26px;" class="highlight">Thank you for providing the information that helps us improve Cosine Gaming for you.</p>
+			</div>
 		{% endif %}
 		{% if captcha_failed %}
-			<p style="font-weight: bold; font-size: 26px;" class="highlight">2+2=4. Please type "4" in the box so we know you're not a spammer. Thanks.</p>
-			<br />
+			<div class="slide-in card">
+				<p style="font-weight: bold; font-size: 26px;" class="highlight">2+2=4. Please type <b>4</b> in the box so we know you're not a spammer. Thanks.</p>
+			</div>
 		{% endif %}
-
-		<p style="font-size: 26px;" class="bottom-spaced">All entries are optional.</p>
 
 		<form name="survey" action="/contact/submit" method="post">
 
-			<p>What is your favorite game you've played on Cosine Gaming?</p>
-			{% for game in games %}
-				<input type="radio" name="favorite-game" value="{{ game.name }}" id="{{ game.url }}-best" /><label for="{{ game.url }}-best">{{ game.name }}</label>
-			{% endfor %}
-			<p style="padding-top: 40px;">Least Favorite?</p>
-			{% for game in games %}
-				<input type="radio" name="least-favorite-game" value="{{ game.name }}" id="{{ game.url }}-worst" /><label for="{{ game.url }}-worst">{{ game.name }}</label>
-			{% endfor %}
-			<p style="padding-top: 40px;">What are some things that could be added to a game?</p>
-			<textarea name="change-in-game"></textarea>
-			<p style="padding-top: 40px;">Any suggestions for a new game you'd like to see?</p>
-			<textarea name="new-game"></textarea>
-			<p style="padding-top: 40px;">Please rate on a scale of 1 to 10:</p>
-			<p>Games overall:</p>
-			1 <input type="range" name="game-rating" min="1" max="10" value="5" /> 10
-			<p>Gameplay:</p>
-			1 <input type="range" name="gameplay-rating" min="1" max="10" value="5" /> 10
-			<p>Story:</p>
-			1 <input type="range" name="story-rating" min="1" max="10" value="5" /> 10
-			<p>Graphics:</p>
-			1 <input type="range" name="graphics-rating" min="1" max="10" value="5" /> 10
+			<div class="card">
+				<p>What is your favorite game you've played on Cosine Gaming?</p>
+				{% for game in games %}
+					<input type="radio" name="favorite-game" value="{{ game.name }}" id="{{ game.url }}-best"{% if responses["favorite-game"] == game.name %} checked{% endif %} /><label for="{{ game.url }}-best">{{ game.name }}</label>
+				{% endfor %}
+				<p style="padding-top: 40px;">Least Favorite?</p>
+				{% for game in games %}
+					<input type="radio" name="least-favorite-game" value="{{ game.name }}" id="{{ game.url }}-worst"{% if responses["least-favorite-game"] == game.name %} checked{% endif %} /><label for="{{ game.url }}-worst">{{ game.name }}</label>
+				{% endfor %}
+				<div style="clear: both"></div>
+			</div>
 
-			<p style="padding-top: 40px;">Please rate on a scale of 1 to 10:</p>
-			<p>Website overall:</p>
-			1 <input type="range" name="website-rating" min="1" max="10" value="5" /> 10
-			<p>Website content:</p>
-			1 <input type="range" name="content-rating" min="1" max="10" value="5" /> 10
-			<p>Website design:</p>
-			1 <input type="range" name="design-rating" min="1" max="10" value="5" /> 10
+			<div class="card">
+				<p>What are some things that could be added to a game?</p>
+				<textarea name="change-in-game">{{ responses["change-in-game"] }}</textarea>
+			</div>
 
-			<p style="padding-top: 40px;">Any other comments?</p>
-			<textarea name="comment"></textarea>
-			<br>
-			<span style="padding-top: 40px;">If you'd like to sign up for the Cosine Gaming newsletter, enter your email here:</span>
-			<input type="email" name="email" />
-			<br>
-			2+2=? <input type="text" name="four" required />
-			<br>
-			<input type="submit" value="Submit" style="display: block; margin-top: 20px;" />
+			<div class="card">
+				<p>Any suggestions for a new game you'd like to see?</p>
+				<textarea name="new-game">{{ responses["new-game"] }}</textarea>
+			</div>
+
+			<div class="card">
+				<p>Please rate on a scale of 1 to 10:</p>
+				<p>Games overall:</p>
+				1 <input type="range" name="game-rating" min="1" max="10" value="{{ responses["game-rating"] }}" /> 10
+				<p>Gameplay:</p>
+				1 <input type="range" name="gameplay-rating" min="1" max="10" value="{{ responses["gameplay-rating"] }}" /> 10
+				<p>Story:</p>
+				1 <input type="range" name="story-rating" min="1" max="10" value="{{ responses["story-rating"] }}" /> 10
+				<p>Graphics:</p>
+				1 <input type="range" name="graphics-rating" min="1" max="10" value="{{ responses["graphics-rating"] }}" /> 10
+			</div>
+
+			<div class="card">
+				<p>Please rate on a scale of 1 to 10:</p>
+				<p>Website overall:</p>
+				1 <input type="range" name="website-rating" min="1" max="10" value="{{ responses["website-rating"] }}" /> 10
+				<p>Website content:</p>
+				1 <input type="range" name="content-rating" min="1" max="10" value="{{ responses["content-rating"] }}" /> 10
+				<p>Website design:</p>
+				1 <input type="range" name="design-rating" min="1" max="10" value="{{ responses["design-rating"] }}" /> 10
+			</div>
+
+			<div class="card">
+				<p>Any other comments?</p>
+				<textarea name="comment">{{ responses["comment"] }}</textarea>
+				<span style="padding-top: 40px;">If you'd like to sign up for the Cosine Gaming newsletter, enter your email here:</span>
+				<input type="email" name="email" value="{{ responses["email"] }}" />
+			</div>
+			<div class="card">
+				2+2=? <input type="text" name="four" required /> <span>Please enter <b>4</b> to prove humanness.</span>
+				<input type="submit" value="Submit" />
+			</div>
 
 		</form>
 
-		<br />
-
-		<p>
+		<p class="card">
 			You can also email us at <a href="mailto:cosinegaming@gmail.com?Subject=Online%20Form">cosinegaming@gmail.com</a>.
 		</p>
 
