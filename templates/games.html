@@ -23,6 +23,7 @@
 			height: 250px;
 			width: 630px;
 			margin: 25px 0;
+			overflow: hidden;
 			text-decoration: none;
 			background-color: white;
 			box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
@@ -39,7 +40,6 @@
 
 			ul.game-list li a div {
 				position: absolute;
-				overflow: hidden;
 				width: 100%;
 				height: 250px;
 				z-index: 1;
@@ -135,6 +135,55 @@
 
 	</style>
 
+	<script>
+
+		if ("ontouchstart" in document.documentElement)
+		{
+
+			function showLabelsWhenScrolled()
+			{
+
+				// From http://stackoverflow.com/a/22480938/1556332 Thanks! Lifesaver
+				function isScrolledIntoView(el)
+				{
+					var elemTop = el.getBoundingClientRect().top;
+					var elemBottom = el.getBoundingClientRect().bottom;
+
+					var isVisible = (elemTop >= 0) && (elemBottom <= window.innerHeight);
+					return isVisible;
+				}
+
+				window.gameImages = document.getElementsByClassName("game-image");
+				window.gameLabels = document.getElementsByClassName("description");
+
+				function checkLabels()
+				{
+
+					for (var i=0; i<gameImages.length; i++)
+					{
+						if (isScrolledIntoView(gameImages[i]))
+						{
+							gameImages[i].style.opacity = "0.2";
+							gameLabels[i].style.opacity = "1";
+						}
+						else
+						{
+							gameImages[i].style.opacity = "1";
+							gameLabels[i].style.opacity = "0";
+						}
+					}
+
+				}
+
+				setInterval(checkLabels, 500);
+
+			}
+
+			document.addEventListener("DOMContentLoaded", showLabelsWhenScrolled);
+		}
+
+	</script>
+
 {% endblock head %}
 
 {% block main %}
@@ -164,7 +213,7 @@
 		{% for game in games %}
 		<li>
 			<a href="/{{ game.url }}">
-				<div style="background-image: url(/static/game-links/{{ game.url }}.png);">
+				<div style="background-image: url(/static/game-links/{{ game.url }}.png);" class="game-image">
 					<p class="label" id="{{ game.url }}-label">{{ game.name }}</p>
 				</div>
 				<p class="description">{{ game.description }}</p>
