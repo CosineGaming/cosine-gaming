@@ -141,6 +141,18 @@ def top_level(file):
 def games_page():
 	return custom_render("games.html", page="games", games=games)
 
+@app.route("/old")
+def old_games_page():
+	return custom_render("old.html", page="games", games=games)
+
+@app.route("/A")
+def new_games_page():
+	return custom_render("games.html", page="games", games=games)
+
+@app.route("/B")
+def old_games_page_B():
+	return custom_render("old.html", page="games", games=games)
+
 @app.route("/index.html")
 def new_home():
 	return redirect("/games")

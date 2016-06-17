@@ -42,26 +42,23 @@ Highlight: #f698ec
 }
 
 body {
+	background-color: #00010f;
+	color: #d3e4f9;
+	text-align: justify;
 	font-size: 20px;
 	font-weight: 100;
 	font-family: Biolinum, sans-serif;
-	text-align: center; /* Lets us center inline-blocks */
-	background-color: #f5f5f5;
-	background-size: 1000px 1000px;
-	background-repeat: repeat;
-	/*background-image: url("/static/wave.gif");*/
-	overflow-x: hidden;
 }
 
 a {
 	text-decoration: none;
-	color: #3b9ad6;
+	color: #f698ec;
 	font-family: Libertine, serif;
 	transition: color 0.5s;
 }
 
 a:hover {
-	color: #14115c;
+	color: #d3e4f9;
 }
 
 a:active {
@@ -98,26 +95,19 @@ li {
 }
 
 .highlight {
-	color: #0d3365;
+	color: #f698ec;
 }
 
 .wrap {
-	max-width: 700px;
+	max-width: 600px;
+	padding: 0px 5%;
 	margin: 0 auto;
-	text-align: justify;
 }
 
-@media screen and (max-width: 350px) {
+@media screen and (max-width: 550px) {
 	.wrap {
 		text-align: left;
 	}
-}
-
-.card {
-	background-color: white;
-	box-shadow: 0 1px 2px 0 rgba(0,0,0,.26);
-	padding: 25px;
-	margin: 25px;
 }
 
 .bottom-spaced {
@@ -130,8 +120,7 @@ li {
 
 #triangles {
 	/* Width:height must equal 10:1 on account of the JS script */
-	max-width: 1400px;
-	height: 140px;
+	width: 1400px;
 	margin: 0 auto 20px auto;
 	overflow: hidden;
 }
@@ -146,9 +135,7 @@ li {
 nav {
 	overflow: hidden;
 	width: 100%;
-	background-color: #14115c;
-	/*border-bottom: 3px solid black;*/
-	box-shadow: 0 4px 10px 0 rgba(0,0,0,.26);
+	border-bottom: 3px solid #d3e4f9;
 }
 
 	nav ul {
@@ -165,7 +152,7 @@ nav {
 		}
 
 		nav ul #active a {
-			color: #3b9ad6;
+			color: #d3e4f9;
 		}
 
 	nav h1 {
@@ -173,14 +160,6 @@ nav {
 		padding-bottom: 40px;
 		text-align: center;
 		font-size: 75px;
-	}
-
-	nav a {
-		color: #d3e4f9;
-	}
-
-	nav a:hover {
-		color: #3b9ad6;
 	}
 
 /* By default, the header has hard-coded sizes. This helps different devices look Ok.
@@ -221,16 +200,10 @@ nav {
 
 }
 
-.card:first-child {
-	margin-top: 50px;
-}
-
 footer {
-	display: inline-block;
-	margin: 25px;
-	padding-bottom: 25px;
-	max-width: 1400px;
+	padding: 75px 0px;
 	text-align: center;
+	overflow-x: hidden;
 }
 
 /* Form Styling */
@@ -251,18 +224,18 @@ label {
 	float: left;
 	text-align: center;
 	background-color: #d3e4f9;
-	color: #14115c;
+	color: #00010f;
 	transition: color 0.2s, background-color 0.2s;
 }
 
 label:hover {
-	background-color: #3b9ad6;
-	color: #14115c;
+	background-color: #00010f;
+	color: #d3e4f9;
 }
 
 input[type="radio"]:checked + label {
-	background-color: #3b9ad6;
-	color: #d3e4f9;
+	background-color: #00010f;
+	color: #f698ec;
 }
 
 label + br, label + p {
@@ -271,11 +244,11 @@ label + br, label + p {
 }
 
 textarea, input {
-	background-color: #f5f5f5;
-	color: black;
+	background-color: #00010f;
+	color: #d3e4f9;
 	font-family: Biolinum, sans-serif;
 	font-size: 20px;
-	border: none;/*2px solid #f698ec;*/
+	border: 2px solid #f698ec;
 	margin: 10px 0px;
 	padding: 4px;
 }
@@ -291,30 +264,16 @@ input[type="range"] {
 }
 
 input[type="submit"] {
-	background-color: #3b9ad6;
-	color: black;
-	box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
-	transition: box-shadow 0.3s, background-color 0.3s;
+	background-color: #f698ec;
+	color: #00010f;
 }
 
 input[type="submit"]:hover {
-	box-shadow: 0 4px 10px 0 rgba(0,0,0,.26);
-	background-color: #d3e4f9;
+	border-color: #00010f;
 }
 
 input[type="submit"]:active {
-	box-shadow: 0 1px 2px 0 rgba(0,0,0,.26);
-	transition: box-shadow 0.1s, background-color 0.1s;
-}
-
-.slide-in
-{
-	position: relative;
-	animation: slide-in 0.5s cubic-bezier(0.745, 1.650, 0.610, 0.845);
-}
-
-@keyframes slide-in
-{
-	from { left: -100%; }
-	to { left: 0; }
+	background-color: #00010f;
+	color: #d3e4f9;
+	border-color: #f698ec;
 }
