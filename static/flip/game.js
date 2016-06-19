@@ -519,16 +519,15 @@ function gameY(windowY)
 
 function resize()
 {
+	var first = !size;
     size = Math.min(window.innerWidth, window.innerHeight);
     container.style.width = size + "px";
     container.style.height = size + "px";
     document.getElementById("three-column").style.height = window.innerHeight + "px";
-	var adcontainer = document.getElementById("ad-container");
-	adcontainer.innerHTML = "";
-	adcontainer.style.width = "100%";
-	adcontainer.style.height = "100%";
-	delete adcontainer.dataset["adsbygoogleStatus"];
-	(adsbygoogle = window.adsbygoogle || []).push({});
+	if (first)
+	{
+		(adsbygoogle = window.adsbygoogle || []).push({});
+	}
 }
 
 function resizeCallback()
@@ -559,4 +558,4 @@ function addLine(line)
     return points.stroke({ width: 1 });
 }
 
-onload = initialize;
+document.addEventListener("DOMContentLoaded", initialize);
