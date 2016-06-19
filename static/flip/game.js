@@ -28,7 +28,8 @@ var scoreText = null;
 var lastLine = null;
 
 var displayMatrix = null;
-var tweenDelta = null;
+var tweenAt = null;
+var tweenStart = null;
 var tweenHandle = null;
 
 var startedTime = null;
@@ -127,8 +128,8 @@ function setLevel(lvl)
     }
     lastLine = null;
 
-    matrix = numeric.identity(3);
-    skipTween();
+    matrix = new SVG.Matrix;
+    displayMatrix = matrix;
 
     moves = 0;
     var par = levels[level].par;
@@ -165,11 +166,11 @@ function setLevel(lvl)
 
     if (levels[level].answer)
     {
-        answer.transform("matrix", transformString(levels[level].answer));
+        answer.matrix(levels[level].answer);
     }
 	for (var i=0; i<levelObstacles.length; i++)
 	{
-		levelObstacles[i].transform("matrix", transformString(levels[level].obstacles[i]));
+		levelObstacles[i].matrix(levels[level].obstacles[i]);
 	}
 
     redraw();
@@ -247,6 +248,7 @@ function getLine(x, y)
         if (m)
         {
             var b = line[1] - m*line[0];
+			// Find perpendicular line's intersection with line (nearest point)
             var near_x = ((y + x/m) - b) / (m + 1/m);
             var near_y = m*near_x + b;
             var d_x = x - near_x;
@@ -299,6 +301,7 @@ function clicked(e)
     if (x >= 0 && x <= 100)
     {
 
+		// Reset button
         if (x > reset.x() && x < reset.x() + reset.width()
             && y > reset.y() && y < reset.y() + reset.height())
         {
@@ -316,10 +319,12 @@ function clicked(e)
             reflect(levels[level].lines[line]);
 
             moves += 1;
-            tweenDelta = numeric.div(numeric.sub(matrix, displayMatrix), 20);
+			displayMatrix.morph(matrix);
+			tweenAt = 0;
             tweenHandle = requestAnimationFrame(tween);
 
-            var center = numeric.dot(matrix, [player.x() + 4, player.y() + 4, 1]);
+            var center = matrix.multiply(new SVG.Matrix("0,0,0,0," + (player.x() + 4) + "," + (player.y() + 4)));
+			center = [center.e, center.f];
             if (center[0] < 0 || center[0] > 100 || center[1] < 0 || center[1] > 100)
             {
 				lose();
@@ -328,13 +333,13 @@ function clicked(e)
 			{
 				for (var i=0; i<levels[level].obstacles.length; i++)
 				{
-					if (matEq(matrix, levels[level].obstacles[i]))
+					if (matEq(matrix, new SVG.Matrix(levels[level].obstacles[i])))
 					{
 						lose();
 					}
 				}
 			}
-            if (matEq(matrix, levels[level].answer))
+            if (matEq(matrix, new SVG.Matrix(levels[level].answer)))
             {
                 sendData();
                 onParText.show();
@@ -390,26 +395,9 @@ function pressed(e)
 
     if (e.keyCode == "B".charCodeAt(0))
     {
-        out = "["
-        for (var x=0; x<3; x++)
-        {
-            out += "["
-            for (var y=0; y<3; y++)
-            {
-                out += matrix[x][y];
-                if (y != 2)
-                {
-                    out += ","
-                }
-            }
-            out += "]"
-            if (x != 2)
-            {
-                out += ","
-            }
-        }
-        out += "]"
-        document.write(out)
+		var fullString = matrix.toString();
+		// Strips "matrix("...")", then adds quotes
+		document.write("\"" + fullString.substr(7,fullString.length-8) + "\"");
     }
     if (e.keyCode == "R".charCodeAt(0))
     {
@@ -437,58 +425,51 @@ function reflect(line)
         var q1 = m + (1 / m);
         var q2 = 1 + m*m;
         // Matricized version of http://martin-thoma.com/reflecting-a-point-over-a-line/
-        flip = [[2/m/q1 - 1, 2/q1, -2*b/q1], [2*m/q2, 2*m*m/q2 - 1, 2*b/q2], [0, 0, 1]];
+		// 1 3 5
+		// 2 4 6
+        flip = new SVG.Matrix(2/m/q1 - 1, 2*m/q2, 2/q1, 2*m*m/q2 - 1, -2*b/q1, 2*b/q2);
     }
     else
     {
         if (m == null)
         {
             // Vertical line flip
-            flip = [[-1, 0, 2 * line[0]], [0, 1, 0], [0, 0, 1]];
+            flip = new SVG.Matrix(-1, 0, 0, 1, 2 * line[0], 0);
         }
         else
         {
             // Horizontal line flip
-            flip = [[1, 0, 0], [0, -1, 2 * line[1]], [0, 0, 1]];
+            flip = new SVG.Matrix(1, 0, 0, -1, 0, 2 * line[1]);
         }
     }
-    matrix = numeric.dot(flip, matrix);
+    matrix = flip.multiply(matrix);
 
 }
 
 function redraw()
 {
-    player.transform("matrix", transformString(displayMatrix));
+	player.matrix(displayMatrix.at(tweenAt));
     movesText.text("MOVES: " + moves);
     scoreText.text("SCORE: " + score);
 }
 
-function tween()
+function tween(time)
 {
-
-    numeric.addeq(displayMatrix, tweenDelta);
-    var done = false;
-    for (var x=0; x<3 && !done; x++)
-    {
-        for (var y=0; y<3 && !done; y++)
-        {
-            if ((displayMatrix[x][y] > matrix[x][y] && tweenDelta[x][y] >= 0)
-                || (displayMatrix[x][y] < matrix[x][y] && tweenDelta[x][y] <= 0))
-            {
-                done = true;
-            }
-        }
-    }
-    if (!done)
-    {
-        tweenHandle = requestAnimationFrame(tween);
-    }
-    else
-    {
-        displayMatrix = matrix;
-    }
+	var tweenTime = 320;
+	if (!tweenStart) tweenStart = time;
+	var elapsed = time-tweenStart;
+	tweenAt = elapsed / tweenTime;
+	if (tweenAt >= 1)
+	{
+		tweenStart = null;
+		tweenAt = 0;
+		displayMatrix = displayMatrix.at(1);
+	}
+	else
+	{
+		tweenHandle = requestAnimationFrame(tween);
+	}
     redraw();
-
 }
 
 function skipTween()
@@ -497,43 +478,22 @@ function skipTween()
     {
         cancelAnimationFrame(tweenHandle);
         tweenHandle = null;
+		tweenStart = null;
+		displayMatrix = displayMatrix.at(tweenAt);
+		tweenAt = 0;
     }
-    displayMatrix = matrix;
+}
+
+function near(a, b)
+{
+	var epsilon = 0.001;
+	return Math.abs(a - b) < epsilon;
 }
 
 function matEq(a, b)
 {
-    var epsilon = 0.001;
-    for (var x=0; x<3; x++)
-    {
-        for (var y=0; y<3; y++)
-        {
-            var c = a[x][y];
-            var d = b[x][y];
-            if (c == d)
-            {
-                continue;
-            }
-            diff = Math.abs(c - d)
-            if (c == 0 || d == 0)
-            {
-                if (diff < epsilon * epsilon)
-                {
-                    continue;
-                }
-                return false;
-            }
-            else
-            {
-                if (diff / (Math.abs(c) + Math.abs(d)) < epsilon)
-                {
-                    continue;
-                }
-                return false;
-            }
-        }
-    }
-    return true;
+	return (near(a.a, b.a) && near(a.b, b.b) && near(a.c, b.c) &&
+	        near(a.d, b.d) && near(a.e, b.e) && near(a.f, b.f));
 }
 
 function slope(line)
@@ -597,12 +557,6 @@ function addLine(line)
 {
     var points = lineGroup.line(line[0], line[1], line[0] + line[2], line[1] + line[3]);
     return points.stroke({ width: 1 });
-}
-
-function transformString(mat)
-{
-    return mat[0][0] + "," + mat[1][0] + "," + mat[0][1] + "," + mat[1][1] +
-        "," + mat[0][2] + "," + mat[1][2]
 }
 
 onload = initialize;
