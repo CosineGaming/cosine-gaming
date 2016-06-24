@@ -9,16 +9,16 @@
 
 	<style>
 
-		ul.game-list {
+		.game-list {
 			width: 100%;
 			display: flex;
 			flex-wrap: wrap;
 			justify-content: space-around;
-			margin: 0 15px;
+			padding: 0 15px;
 			box-sizing: border-box;
 		}
 
-		ul.game-list li {
+		.game-list li {
 			position: relative;
 			height: 250px;
 			width: 630px;
@@ -30,108 +30,54 @@
 			transition: box-shadow 0.3s, opacity 0.3s;
 		}
 
-		ul.game-list li:hover {
+		.game-list li:hover {
 			box-shadow: 0 4px 10px 0 rgba(0,0,0,.26);
 		}
 
-		ul.game-list li:active {
+		.game-list li:active {
 			box-shadow: 0 1px 2px 0 rgba(0,0,0,.26);
 			transition: box-shadow 0.1s, opacity 0.1s, background-color 0.1s;
 		}
 
-			ul.game-list li a div {
-				position: absolute;
-				width: 100%;
-				height: 250px;
-				z-index: 1;
-				background-position: center top;
-				background-repeat: no-repeat;
-				opacity: 1;
-				transition: opacity 0.3s;
-			}
+		.game-image {
+			position: absolute;
+			width: 100%;
+			height: 250px;
+			z-index: 1;
+			background-position: center top;
+			background-repeat: no-repeat;
+			opacity: 1;
+			transition: opacity 0.3s;
+		}
 
-			ul.game-list li:hover a div {
-				opacity: 0.2;
-			}
+		.game-list li:hover .game-image {
+			opacity: 0.2;
+		}
 
-			ul.game-list li a p.description {
-				position: absolute;
-				left: 0;
-				right: 0;
-				top: 55px;
-				max-width: 600px;
-				width: 100%; /* This fixes a weird fluke in IE's text-align */
-				margin: 0 auto;
-				text-align: center;
-				/* Text on top of image */
-				z-index: 2;
-				color: black;
-				opacity: 0;
-				transition: opacity 0.3s;
-			}
+		.description {
+			max-width: 600px;
+			width: 100%; /* This fixes a weird fluke in IE's text-align */
+			margin: 0 auto;
+			text-align: center;
+			/* Text on top of image */
+			z-index: 2;
+			color: black;
+			position: absolute;
+			top: 50%;
+			transform: translateY(-50%);
+			opacity: 0;
+			transition: opacity 0.3s, top 0.3s;
+		}
 
-			ul.game-list li:hover a p.description {
-				opacity: 1;
-			}
+		.game-list li:hover .description {
+			opacity: 1;
+			top: 50%;
+		}
 
-			ul.game-list li a div p.label {
-				display: none;
-				position: absolute;
-				left: 50%;
-				color: #f698ec;
-				font-family: Libertine, serif;
-			}
-
-		/* List of labels's positions, padding-left offsets text's position from the center */
-		#swarm-label {
-			top: 75px;
-			margin-left: -570px;
-			font-size: 150px;
-		}
-		#flip-label {
-			top: 150px;
-			margin-left: -350px;
-			font-size: 130px;
-		}
-		#dash-label {
-			top: 150px;
-			margin-left: 200px;
-			font-size: 120px;
-		}
-		#less-than-shadows-label {
-			top: 80px;
-			margin-left: -40px;
-			font-size: 60px;
-		}
-		#parallel-label {
-			top: 300px;
-			margin-left: -175px;
-			font-size: 100px;
-		}
-		#revenge-label {
-			top: 390px;
-			margin-left: -145px;
-			font-size: 80px;
-		}
-		#sniper-label {
-			top: 380px;
-			margin-left: -120px;
-			font-size: 100px;
-		}
-		#ace-slicenick-label {
-			top: 285px;
-			margin-left: -250px;
-			font-size: 90px;
-		}
-		#stealth-label {
-			top: 375px;
-			margin-left: -175px;
-			font-size: 110px;
-		}
-		#circle-wars-label {
-			top: 230px;
-			margin-left: -125px;
-			font-size: 75px;
+		.description h2 {
+			color: #3b9ad6;
+			/*color: #14115c;*/
+			margin-bottom: 10px;
 		}
 
 	</style>
@@ -204,10 +150,11 @@
 		{% for game in games %}
 		<li>
 			<a href="/{{ game.url }}">
-				<div style="background-image: url(/static/game-links/{{ game.url }}.png);" class="game-image">
-					<p class="label" id="{{ game.url }}-label">{{ game.name }}</p>
+				<div style="background-image: url(/static/game-links/{{ game.url }}.png);" class="game-image"></div>
+				<div class="description">
+					<h2>{{ game.name }}</h2>
+					<p>{{ game.description }}</p>
 				</div>
-				<p class="description">{{ game.description }}</p>
 			</a>
 		</li>
 		{% endfor %}
