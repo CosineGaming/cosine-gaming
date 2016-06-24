@@ -32,9 +32,6 @@ var tweenAt = null;
 var tweenStart = null;
 var tweenHandle = null;
 
-var startedTime = null;
-var resizeTimer = null;
-
 var version = "0.2";
 
 var playerSize = 8;
@@ -49,8 +46,8 @@ function initialize()
     container.addEventListener("keyup", pressed);
     container.focus();
 
+    document.addEventListener("resize", resize);
 	resize();
-    window.onresize = resizeCallback;
 
     game = SVG("game").viewbox(0,0,100,100);
     var gridStyle = { color: "#BBB", width: 0.2 };
@@ -61,9 +58,9 @@ function initialize()
     }
     lineGroup = game.group();
 	obstacleGroup = game.group();
-    answer = game.image("/static/flip/assets/target.svg", playerSize);
-    player = game.image("/static/flip/assets/player.svg", playerSize);
-    reset = game.image("/static/flip/assets/reset.svg", 6).move(72, 4);
+    answer = game.image("http://cosinegaming.com/static/flip/assets/target.svg", playerSize);
+    player = game.image("http://cosinegaming.com/static/flip/assets/player.svg", playerSize);
+    reset = game.image("http://cosinegaming.com/static/flip/assets/reset.svg", 6).move(72, 4);
 
 	initText();
 
@@ -158,7 +155,7 @@ function setLevel(lvl)
 		{
 			for (var i=0; i<levels[level].obstacles.length; i++)
 			{
-				levelObstacles.push(obstacleGroup.image("/static/flip/assets/obstacle.svg", playerSize).move(pos[0], pos[1]));
+				levelObstacles.push(obstacleGroup.image("http://cosinegaming.com/static/flip/assets/obstacle.svg", playerSize).move(pos[0], pos[1]));
 			}
 		}
 
@@ -294,8 +291,8 @@ function lose()
 function clicked(e)
 {
 
-    var x = gameX(e.clientX);
-    var y = gameY(e.clientY);
+    var x = gameX(e.pageX - container.offsetLeft);
+    var y = gameY(e.pageY - container.offsetTop);
     e.preventDefault();
 
     if (x >= 0 && x <= 100)
@@ -367,8 +364,8 @@ function clicked(e)
 function hovered(e)
 {
 
-    var x = gameX(e.clientX);
-    var y = gameY(e.clientY);
+    var x = gameX(e.pageX - container.offsetLeft);
+    var y = gameY(e.pageY - container.offsetTop);
 
     if (lastLine != null)
     {
@@ -510,7 +507,7 @@ function slope(line)
 
 function gameX(windowX)
 {
-    return (windowX - window.innerWidth / 2) / size * 100 + 50;
+    return windowX / size * 100;
 }
 function gameY(windowY)
 {
@@ -519,24 +516,7 @@ function gameY(windowY)
 
 function resize()
 {
-	var first = !size;
-    size = Math.min(window.innerWidth, window.innerHeight);
-    container.style.width = size + "px";
-    container.style.height = size + "px";
-    document.getElementById("three-column").style.height = window.innerHeight + "px";
-	if (first)
-	{
-		(adsbygoogle = window.adsbygoogle || []).push({});
-	}
-}
-
-function resizeCallback()
-{
-	if (resizeTimer)
-	{
-		clearTimeout(resizeTimer);
-	}
-	resizeTimer = setTimeout(resize, 250);
+    size = Math.min(container.offsetWidth, container.offsetHeight);
 }
 
 function sendData()
@@ -546,7 +526,7 @@ function sendData()
     var now = new Date();
     var time = Math.floor((now - startTime) / 1000);
     var req = new XMLHttpRequest();
-    req.open("get", "/flip/data?level="+level+"&time="+time+"&moves="+moves, true);
+    req.open("get", "http://cosinegaming.com/flip/data?level="+level+"&time="+time+"&moves="+moves, true);
     req.send();
     startTime = now;
 

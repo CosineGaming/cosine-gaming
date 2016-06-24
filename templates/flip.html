@@ -79,6 +79,28 @@
 
         </style>
 
+		<script>
+
+			function resizeStyle()
+			{
+
+				var size = Math.min(window.innerWidth, window.innerHeight)+"px";
+				var container = document.getElementById("game");
+				container.style.width = size;
+				container.style.height = size;
+			    document.getElementById("three-column").style.height = size;
+				(adsbygoogle = window.adsbygoogle || []).push({});
+
+				var resizeEvent = new CustomEvent("resize");
+				document.dispatchEvent(resizeEvent);
+
+				document.addEventListener("resize", resizeStyle);
+
+			}
+			document.addEventListener("DOMContentLoaded", resizeStyle);
+
+		</script>
+
     </head>
     <body>
 
