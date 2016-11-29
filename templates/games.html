@@ -23,7 +23,7 @@
 			height: 250px;
 			width: 630px;
 			margin: 25px 0;
-			overflow: hidden;
+			overflow: visible;
 			text-decoration: none;
 			background-color: white;
 			box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
@@ -37,6 +37,10 @@
 		.game-list li:active {
 			box-shadow: 0 1px 2px 0 rgba(0,0,0,.26);
 			transition: box-shadow 0.1s, opacity 0.1s, background-color 0.1s;
+		}
+
+		.background-rect {
+			position: absolute;
 		}
 
 		.game-image {
@@ -84,7 +88,67 @@
 
 	<script>
 
-		// Add a slighly randomly offset background to each game tile
+		function squares()
+		{
+			var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+			var square = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+			square.style.fill = "#ddd";
+			square.setAttribute("x", 0);
+			square.setAttribute("y", 0);
+			square.setAttribute("width", 630 + Math.floor(Math.random() * 80));
+			square.setAttribute("height", 250 + Math.floor(Math.random() * 80));
+			svg.appendChild(square);
+			for (var i=0;i<144;++i)
+			{
+				var square = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+				square.style.fill = "#cecece";
+				var maxSize = 30;
+				var size = Math.floor(Math.random() * maxSize);
+				var x = Math.floor(Math.random() * 40);
+				if (Math.random() < .5)
+				{
+					x = -x;
+				}
+				else
+				{
+					x = 630 - size + x;
+				}
+				var y = Math.floor(Math.random() * 40);
+				if (Math.random() < .5)
+				{
+					y = -y;
+				}
+				else
+				{
+					y = 630 - size + y;
+				}
+				square.setAttribute("x", x);
+				square.setAttribute("y", y);
+				square.setAttribute("width", size);
+				square.setAttribute("height", size);
+				svg.appendChild(square);
+			}
+			return svg;
+		}
+
+		// Wait for DOM load
+		function ready()
+		{
+			// Add a slighly randomly offset background to each game tile
+			var backgroundRects = document.getElementsByClassName("background-rect");
+			for (rect of backgroundRects)
+			{
+				var borderMax = 40;
+				//rect.style.backgroundColor = ["#ddd", "#cecece"][Math.floor(Math.random()*2)];
+				rect.style.backgroundImage = "url(data:image/svg+xml;base64," + btoa(new XMLSerializer().serializeToString(squares())) + ")";
+				rect.style.width = "1000px";//630 + Math.floor(Math.random() * borderMax) + "px";
+				rect.style.height = "1000px";//250 + Math.floor(Math.random() * borderMax) + "px";
+				rect.style.left = "-" + Math.floor(Math.random() * borderMax / 2) + "px";
+				rect.style.top = "-" + Math.floor(Math.random() * borderMax / 2) + "px";
+			}
+		}
+
+		document.addEventListener("DOMContentLoaded", ready);
 
 		if ("ontouchstart" in document.documentElement)
 		{
@@ -153,6 +217,7 @@
 
 		{% for game in games %}
 		<li>
+			<div class="background-rect"></div>
 			<a href="/{{ game.url }}">
 				<div style="background-image: url(/static/game-links/{{ game.url }}.png);" class="game-image"></div>
 				<div class="description">
