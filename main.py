@@ -15,7 +15,7 @@ from google.appengine.ext import ndb
 from Crypto.Hash import SHA256
 
 app = Flask(__name__)
-#app.config['DEBUG'] = True
+app.config['DEBUG'] = True
 
 descriptions = {}
 for name, description in app.jinja_env.get_template("game-descriptions.html").blocks.iteritems():
@@ -70,14 +70,14 @@ class Game():
 games = [
 	Game("Flip"),
 	Game("Swarm"),
-	Game("Dash", "https://googledrive.com/host/0B_dBpITkI8hpTjg5VWZTbWxRdXc/Dash.exe"),
+	Game("Dash", "https://www.dropbox.com/s/2vynb3smhc914sn/Dash.exe?dl=1"),
 	Game("Revenge", size=[800, 595]),
 	Game("Parallel", "https://www.dropbox.com/s/kk4imwyd9b6hewp/Parallel.zip?dl=1", extract=True),
 	Game("Less than Shadows", size=[800, 600]),
-	Game("Sniper", "https://googledrive.com/host/0B_dBpITkI8hpTjg5VWZTbWxRdXc/Sniper.zip", extract=True),
+	Game("Sniper", "https://www.dropbox.com/s/ftr7hp44wsntpzx/Sniper.zip?dl=1", extract=True),
 	Game("Ace Slicenick", size=[1000, 570]),
 	Game("Stealth", size=[475, 600]),
-	Game("Circle Wars", "https://googledrive.com/host/0B_dBpITkI8hpTjg5VWZTbWxRdXc/CircleWars.exe")
+	Game("Circle Wars", "https://www.dropbox.com/s/0q5zu02ybvleduj/CircleWars.exe?dl=1")
 ]
 
 class Blog_Entry(ndb.Model):
