@@ -15,7 +15,7 @@ from google.appengine.ext import ndb
 from Crypto.Hash import SHA256
 
 app = Flask(__name__)
-app.config['DEBUG'] = True
+#app.config['DEBUG'] = True
 
 descriptions = {}
 for name, description in app.jinja_env.get_template("game-descriptions.html").blocks.iteritems():
