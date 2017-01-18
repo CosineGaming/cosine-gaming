@@ -16,6 +16,7 @@ var gridGroup;
 var foldLine = [[0,0],[0,0]];
 var foldLineObject;
 var successObject;
+var restartObject;
 
 var level = 0;
 var clickLine = false;
@@ -27,17 +28,17 @@ var mode = "line";
 function initialize()
 {
 
-    container = document.getElementById("game");
-    container.setAttribute("tabindex", 0)
-    container.addEventListener("mousedown", mouseDown);
-    container.addEventListener("mouseup", mouseUp);
-    container.addEventListener("mousemove", hovered);
-    container.addEventListener("keydown", pressed);
+	container = document.getElementById("game");
+	container.setAttribute("tabindex", 0)
+	container.addEventListener("mousedown", mouseDown);
+	container.addEventListener("mouseup", mouseUp);
+	container.addEventListener("mousemove", hovered);
+	container.addEventListener("keydown", pressed);
 	container.addEventListener("keyup", released);
-    container.focus();
+	container.focus();
 	container.style.backgroundColor = "#00010f";
 
-    game = SVG("game");
+	game = SVG("game");
 	resize();
 	window.onresize = resizeCallback;
 
@@ -71,6 +72,7 @@ function loadLevel(index, firstTime)
 		answerGroup.remove();
 		gridGroup.remove();
 		successObject.remove();
+		restartObject.remove();
 	}
 
 	papers.push([[16,16], [112,16], [112,112], [16,112]]);
@@ -80,14 +82,15 @@ function loadLevel(index, firstTime)
 	colorLayers(false);
 	foldLineObject = game.line([[0, 0], [0, 0]]).stroke({color:"#f698ec", width: 0.5});
 	answerGroup = game.group();
-    var gridStyle = { color: "#bbb", width: 0.1 };
+	var gridStyle = { color: "#bbb", width: 0.1 };
 	gridGroup = game.group();
-    for (var i=0; i<=128; i+=8)
-    {
-        gridGroup.line(i, 0, i, 128).stroke(gridStyle);
-        gridGroup.line(0, i, 128, i).stroke(gridStyle);
-    }
+	for (var i=0; i<=128; i+=8)
+	{
+		gridGroup.line(i, 0, i, 128).stroke(gridStyle);
+		gridGroup.line(0, i, 128, i).stroke(gridStyle);
+	}
 	successObject = game.image("static/creased/assets/success.svg").opacity(0);
+	restartObject = game.image("static/creased/assets/restart.svg", 10, 10).move(5, 5);
 
 	answer = levels[level].hash;
 	for (var layer=0; layer<levels[level].layers.length; ++layer)
@@ -149,7 +152,19 @@ function hovered(e)
 function mouseUp(e)
 {
 
-	if (mode == "line")
+	if (gameX(e.clientX) > 5 && gameX(e.clientX) < 15 && gameY(e.clientY) > 5 && gameY(e.clientY) < 15)
+	{
+		if (clickLine)
+		{
+			clickLine = false;
+			foldLineObject.plot([[0,0],[0,0]]);
+		}
+		else
+		{
+			loadLevel(level);
+		}
+	}
+	else if (mode == "line")
 	{
 		foldLine[1][0] = Math.round(gameX(e.clientX)/8)*8;
 		foldLine[1][1] = Math.round(gameY(e.clientY)/8)*8;
@@ -529,29 +544,29 @@ function released(e)
 function slope(line)
 {
 	var dx = line[1][0] - line[0][0];
-    if (dx == 0)
-        return null;
-    else
-        return (line[1][1] - line[0][1]) / dx;
+	if (dx == 0)
+		return null;
+	else
+		return (line[1][1] - line[0][1]) / dx;
 }
 
 function gameX(windowX)
 {
-    return (windowX - window.innerWidth / 2) / size * 128 + 64;
+	return (windowX - window.innerWidth / 2) / size * 128 + 64;
 }
 function gameY(windowY)
 {
-    return windowY / size * 128;
+	return windowY / size * 128;
 }
 
 function resize()
 {
-    size = Math.min(window.innerWidth, window.innerHeight);
+	size = Math.min(window.innerWidth, window.innerHeight);
 	aspectExtra = (window.innerWidth - window.innerHeight) / 2; // TODO: Make axis-independent
 	//game.viewbox(-aspectExtra,128+aspectExtra,128,128);
 	game.viewbox(0,0,128,128);
-    container.style.width = window.innerWidth + "px";
-    container.style.height = window.innerHeight + "px";
+	container.style.width = window.innerWidth + "px";
+	container.style.height = window.innerHeight + "px";
 }
 
 function resizeCallback()
@@ -564,3 +579,4 @@ function resizeCallback()
 }
 
 onload = initialize;
+

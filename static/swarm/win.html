@@ -1,0 +1,40 @@
+{% extends "standard.html" %}
+
+{% block title %}Swarm - You win{% endblock %}
+
+{% block head %}
+
+    {{ super() }}
+
+    <link rel="stylesheet" href="style.css" />
+
+{% endblock %}
+
+
+{% block main %}
+
+	<div class="wrap">
+
+		<h2 class="entry-spaced bottom-spaced">Swarm</h2>
+
+		<h3 class="bottom-spaced">You win!</h3>
+
+        <a href="play" class="play" style="bottom-spaced">Play again!</a>
+
+		<img src="assets/swarm.png" class="side-img" />
+
+		<p class="indent bottom-spaced">
+			Nooooo! Our hero has perished in the hands of the awful swarmies!
+		</p>
+
+        <p class="indent bottom-spaced">
+            You like it in there, don't you?! You like being inside that awful pack.
+            You like that evil interconnected bunch.... you monster!
+            The triflappers will come again!
+        </p>
+
+        <p>Thanks to Kevin MacLeod at <a href="http://incompetech.com/">Incompetech</a> for the music, EDM Detection Mode!</p>
+
+	</div>
+
+{% endblock %}

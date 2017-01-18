@@ -1,0 +1,39 @@
+{% extends "standard.html" %}
+
+{% block title %}Swarm - You lose{% endblock %}
+
+{% block head %}
+
+    {{ super() }}
+
+    <link rel="stylesheet" href="style.css" />
+
+{% endblock %}
+
+
+{% block main %}
+
+	<div class="wrap">
+
+		<h2 class="entry-spaced bottom-spaced">Swarm</h2>
+
+		<h3 class="bottom-spaced">Game over!</h3>
+
+        <a href="play" class="play" style="bottom-spaced">Retry!</a>
+
+		<img src="assets/big.png" class="side-img" />
+
+		<p class="indent bottom-spaced">
+			Yes! Alas, our hero has reclaimed the land all for the triflappers!
+		</p>
+
+        <p class="indent bottom-spaced">
+            Oh, but your conciousness.... it was in the swarm, wasn't it? Oh no!
+            I feel very sorry for you, monster, but it was neccessary for the valient triflappers!
+        </p>
+
+        <p>Thanks to Kevin MacLeod at <a href="http://incompetech.com/">Incompetech</a> for the music, EDM Detection Mode!</p>
+
+	</div>
+
+{% endblock %}

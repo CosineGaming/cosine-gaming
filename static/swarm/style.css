@@ -1,0 +1,27 @@
+
+
+.play {
+    display: block;
+    font-size: 30px;
+    border: 2px solid #f698ec;
+    margin: 10px auto;
+    padding: 4px;
+    background-color: #f698ec;
+    color: #00010f;
+    text-align: center;
+}
+
+.play:hover {
+    border-color: #00010f;
+}
+
+.play:active {
+    background-color: #00010f;
+    color: #d3e4f9;
+    border-color: #f698ec;
+}
+
+.side-img {
+    float: right;
+    padding: 20px;
+}
