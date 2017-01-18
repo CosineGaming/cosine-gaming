@@ -104,15 +104,59 @@
 			function ready()
 			{
 				list = document.getElementsByTagName("ol")[0];
+				document.addEventListener("keyup", saveList);
 				setListeners(document);
+				loadList();
 			}
 			window.onload = ready;
 			function addEntry(e)
 			{
+
 				e.target.removeEventListener("keydown", addEntry);
 				var nextRow = e.target.parentNode.cloneNode(true);
 				list.appendChild(nextRow);
 				setListeners(nextRow);
+
+			}
+			function saveList(e)
+			{
+				var params = "?"
+				var entries = list.getElementsByTagName("li");
+				for (var i=0; i<entries.length; i++)
+				{
+					elements = entries[i].getElementsByTagName("input");
+					params += "tasks[]="+elements[0].value+"&";
+					params += "priorities[]="+elements[1].value+"&";
+					params += "times[]="+elements[2].value+"&";
+				}
+				params += "user=Cosine"// + user;
+				var req = new XMLHttpRequest();
+				req.open("get", "/list/save" + params, true);
+				req.send();
+			}
+			function loadList(e)
+			{
+				var req = new XMLHttpRequest();
+				var entries = list.getElementsByTagName("li");
+				req.onreadystatechange = function()
+				{
+					if (req.readyState == 4 && req.status == 200)
+					{
+						alert(req.responseText)
+						list = eval("(" + req.responseText + ")");
+						for (var i=0; i<entries.length; i++)
+						{
+							elements = entries[i].getElementsByTagName("input");
+							elements[0].value = list.tasks[i];
+							elements[1].value = list.priorities[i];
+							elements[2].value = list.times[i];
+						}
+						return true;
+					}
+				}
+				req.open("get", "/list/load/Cosine", true);
+				req.send();
+
 			}
 			function calculateIndex(e)
 			{

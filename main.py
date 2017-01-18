@@ -9,7 +9,7 @@ import datetime
 import htmlmin
 import logging
 import re
-import requests
+import json
 
 from google.appengine.ext import ndb
 from Crypto.Hash import SHA256
@@ -120,6 +120,16 @@ class Quote(ndb.Model):
 	name = ndb.StringProperty(required=True)
 	quote = ndb.TextProperty(required=True)
 	attribution = ndb.TextProperty(required=True)
+
+class To_Do_List(ndb.Model):
+	date = ndb.DateProperty(required=True, auto_now_add=True)
+	user = ndb.StringProperty(required=True)
+	tasks = ndb.StringProperty(repeated=True)
+	priorities = ndb.IntegerProperty(repeated=True)
+	times = ndb.IntegerProperty(repeated=True)
+	@classmethod
+	def get_user(cls, name):
+		return cls.query(cls.user == name).get()
 
 def custom_render(*args, **kwargs):
 	return htmlmin.minify(render_template(*args, **kwargs))
@@ -235,6 +245,26 @@ def view_results():
 def clear_results():
 	ndb.delete_multi(Survey_Entry.query().fetch(keys_only=True))
 	return view_results()
+
+def intlist(list):
+	return [int(x) for x in list]
+
+@app.route("/list/save", methods=["get"])
+def save_to_do_list():
+	to_do = To_Do_List(user=request.args.get("user"), tasks=request.args.getlist("tasks[]"),
+		priorities=intlist(request.args.getlist("priorities[]")), times=intlist(request.args.getlist("times[]")))
+	to_do.put()
+	return ""
+
+@app.route("/list/load/<username>", methods=["get"])
+def load_to_do_list(username):
+	user = To_Do_List.get_user(username)
+	if user:
+		to_do_list = json.dumps({"tasks":user.tasks, "priorities":user.priorities, "times":user.times})
+		logging.info(to_do_list)
+		return to_do_list
+	else:
+		return ""
 
 @app.route("/flip/data", methods=["get"])
 def collect_flip_data():
