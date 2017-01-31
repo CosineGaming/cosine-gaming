@@ -89,8 +89,8 @@ function loadLevel(index, firstTime)
 		gridGroup.line(i, 0, i, 128).stroke(gridStyle);
 		gridGroup.line(0, i, 128, i).stroke(gridStyle);
 	}
-	successObject = game.image("static/creased/assets/success.svg").opacity(0);
 	restartObject = game.image("static/creased/assets/restart.svg", 10, 10).move(5, 5);
+	successObject = game.image("static/creased/assets/success.svg").opacity(0);
 
 	answer = levels[level].hash;
 	for (var layer=0; layer<levels[level].layers.length; ++layer)

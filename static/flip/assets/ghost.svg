@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Generator: Adobe Illustrator 16.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+
+<svg
+   xmlns:osb="http://www.openswatchbook.org/uri/2009/osb"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   id="Layer_1"
+   x="0px"
+   y="0px"
+   width="28.35px"
+   height="28.35px"
+   viewBox="0 0 28.35 28.35"
+   enable-background="new 0 0 28.35 28.35"
+   xml:space="preserve"
+   inkscape:version="0.48.3.1 r9886"
+   sodipodi:docname="player.svg"><metadata
+   id="metadata3048"><rdf:RDF><cc:Work
+       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
+   id="defs3046"><linearGradient
+     id="linearGradient5262"
+     osb:paint="solid"><stop
+       style="stop-color:#000000;stop-opacity:1;"
+       offset="0"
+       id="stop5264" /></linearGradient><linearGradient
+     inkscape:collect="always"
+     xlink:href="#linearGradient5262"
+     id="linearGradient5266"
+     x1="3.4748535"
+     y1="-14.762329"
+     x2="27.473633"
+     y2="-14.762329"
+     gradientUnits="userSpaceOnUse" /></defs><sodipodi:namedview
+   pagecolor="#ffffff"
+   bordercolor="#666666"
+   borderopacity="1"
+   objecttolerance="10"
+   gridtolerance="10"
+   guidetolerance="10"
+   inkscape:pageopacity="0"
+   inkscape:pageshadow="2"
+   inkscape:window-width="1600"
+   inkscape:window-height="881"
+   id="namedview3044"
+   showgrid="false"
+   inkscape:zoom="24.550264"
+   inkscape:cx="6.9856682"
+   inkscape:cy="19.062931"
+   inkscape:window-x="0"
+   inkscape:window-y="0"
+   inkscape:window-maximized="0"
+   inkscape:current-layer="Layer_1" />
+<text
+   transform="matrix(1 0 0 1 -0.3123 27.4124)"
+   fill="#00007F"
+   font-family="'AGaramondPro-Regular'"
+   font-size="40.5"
+   id="text3042"
+   style="stroke:#00007f;stroke-opacity:1;fill:none">R</text>
+
+</svg>
