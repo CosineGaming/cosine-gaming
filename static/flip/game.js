@@ -4,6 +4,7 @@ var size = null;
 
 var player = null;
 var matrix = null;
+var ghost = null;
 
 var answer = null;
 var reset = null;
@@ -25,12 +26,17 @@ var offLevelText = null;
 var levelText = null;
 var scoreText = null;
 
+var helpGroup = null;
+var arrow = null;
+
 var lastLine = null;
 
 var displayMatrix = null;
 var tweenAt = null;
 var tweenStart = null;
 var tweenHandle = null;
+
+var font = ({ family: "Palatino Linotype", size: 3, fill: "black" });
 
 var version = "0.2";
 
@@ -39,117 +45,145 @@ var playerSize = 8;
 function initialize()
 {
 
-    container = document.getElementById("game");
-    container.setAttribute("tabindex", 0)
-    container.addEventListener("mouseup", clicked);
-    container.addEventListener("mousemove", hovered);
-    container.addEventListener("keyup", pressed);
-    container.focus();
+	container = document.getElementById("game");
+	container.setAttribute("tabindex", 0)
+		container.addEventListener("mouseup", clicked);
+	container.addEventListener("mousemove", hovered);
+	container.addEventListener("keyup", pressed);
+	container.focus();
 
-    document.addEventListener("resize", resize);
+	document.addEventListener("resize", resize);
 	resize();
 
-    game = SVG("game").viewbox(0,0,100,100);
-    var gridStyle = { color: "#BBB", width: 0.2 };
-    for (var i=0; i<100; i+=10)
-    {
-        game.line(i, 0, i, 100).stroke(gridStyle);
-        game.line(0, i, 100, i).stroke(gridStyle);
-    }
-    lineGroup = game.group();
+	game = SVG("game").viewbox(0,0,100,100);
+	var gridStyle = { color: "#BBB", width: 0.2 };
+	for (var i=0; i<100; i+=10)
+	{
+		game.line(i, 0, i, 100).stroke(gridStyle);
+		game.line(0, i, 100, i).stroke(gridStyle);
+	}
+	lineGroup = game.group();
 	obstacleGroup = game.group();
-    answer = game.image("http://cosinegaming.com/static/flip/assets/target.svg", playerSize);
-    player = game.image("http://cosinegaming.com/static/flip/assets/player.svg", playerSize);
-    reset = game.image("http://cosinegaming.com/static/flip/assets/reset.svg", 6).move(72, 4);
+	helpGroup = game.group();
+	answer = game.image("http://cosinegaming.com/static/flip/assets/target.svg", playerSize);
+	player = game.image("http://cosinegaming.com/static/flip/assets/player.svg", playerSize);
+	ghost  = game.image("/static/flip/assets/ghost.svg", playerSize).opacity(0);
+	reset = game.image("http://cosinegaming.com/static/flip/assets/reset.svg", 6).move(72, 4);
+
+	arrow = game.marker(8, 8, function(line) {
+		var stroke = {color: "#777", width: "1"};
+		line.line(0, 0, 8, 4).stroke(stroke);
+		line.line(0, 8, 8, 4).stroke(stroke);
+	}).ref(8, 4);
 
 	initText();
 
-    score = 0;
+	score = 0;
 
-    startTime = new Date();
+	startTime = new Date();
 
-    if (!loadLevel())
-    {
-        setLevel(0);
-    }
+	if (!loadLevel())
+	{
+		setLevel(0);
+	}
 
 }
 
 function initText()
 {
 
-    var font = ({ family: "Palatino Linotype", size: 3 });
 
-    movesText = game.text("");
-    movesText.font(font);
-    movesText.move(80, 2);
+	movesText = game.text("");
+	movesText.font(font).move(80, 2);
 
-    parText = game.text("");
-    parText.font(font);
-    parText.move(80, 6);
+	parText = game.text("");
+	parText.font(font).move(80, 6);
 
-    onParText = game.text("");
-    onParText.font(font);
-    onParText.move(80, 10);
+	onParText = game.text("");
+	onParText.font(font).move(80, 10);
 
-    offLevelText = game.text("YOU DIED. RESTARTING LEVEL.")
-    offLevelText.font(font);
-    offLevelText.style("fill", "#000");
-    offLevelText.style("stroke", "#FFF");
-    offLevelText.style("stroke-width", "0.05");
-    offLevelText.style("font-size", "15");
-    offLevelText.move(10, 90);
+	offLevelText = game.text("YOU DIED. RESTARTING LEVEL.")
+	offLevelText.font(font);
+	offLevelText.style("fill", "#000");
+	offLevelText.style("stroke", "#FFF");
+	offLevelText.style("stroke-width", "0.05");
+	offLevelText.style("font-size", "15");
+	offLevelText.move(10, 90);
 
-    levelText = game.text("");
-    levelText.font(font);
-    levelText.move(4, 2);
+	levelText = game.text("");
+	levelText.font(font).move(4, 2);
 
-    scoreText = game.text("");
-    scoreText.font(font);
-    scoreText.move(4, 6);
+	scoreText = game.text("");
+	scoreText.font(font).move(4, 6);
+
+}
+
+// Used for the arcs in help, a partial circle
+// Thank thank mr skeltel http://stackoverflow.com/a/18473154
+function slopeToXY(centerX, centerY, radius, slope, pos)
+{
+	var length = Math.sqrt(slope*slope + 1);
+	return { x: centerX + radius / length * (pos ? 1 : -1), y: centerY + radius * slope / length * (pos ? 1 : -1) };
+}
+
+// Thank thank see above
+function describeArc(x, y, radius, startSlope, posStart, endSlope, posEnd, largeArc)
+{
+
+	var start = slopeToXY(x, y, radius, endSlope, posEnd);
+	var end = slopeToXY(x, y, radius, startSlope, posStart);
+	
+	var d = [
+		"M", start.x, start.y, 
+		"A", radius, radius, 0, +largeArc, 0, end.x, end.y
+	].join(" ");
+
+	return d;
 
 }
 
 function setLevel(lvl)
 {
 
-    level = lvl;
+	level = lvl;
 
-    lineGroup.clear();
-    levelLines = [];
+	lineGroup.clear();
+	levelLines = [];
 
-    lines = levels[level].lines;
-    for (var i=0; i<lines.length; i++)
-    {
-        levelLines.push(addLine(lines[i]));
-    }
-    lastLine = null;
+	lines = levels[level].lines;
+	for (var i=0; i<lines.length; i++)
+	{
+		levelLines.push(addLine(lines[i]));
+	}
+	lastLine = null;
 
-    matrix = new SVG.Matrix;
-    displayMatrix = matrix;
+	matrix = new SVG.Matrix;
+	displayMatrix = matrix;
 
-    moves = 0;
-    var par = levels[level].par;
-    if (!par)
-    {
-        par = "Unsolved"
-    }
-    parText.text("TARGET: " + par);
-    onParText.hide();
-    offLevelText.hide();
-    levelText.text("LEVEL: " + (level + 1));
+	moves = 0;
+	var par = levels[level].par;
+	if (!par)
+	{
+		par = "Unsolved"
+	}
+	parText.text("TARGET: " + par);
+	onParText.hide();
+	offLevelText.hide();
+	levelText.text("LEVEL: " + (level + 1));
 
 	levelObstacles = [];
 	obstacleGroup.clear();
 
-    var pos = levels[level].player;
-    if (pos)
-    {
+	var pos = levels[level].player;
+	if (pos)
+	{
 
-        player.x(pos[0]);
-        player.y(pos[1]);
-        answer.x(pos[0]);
-        answer.y(pos[1]);
+		player.x(pos[0]);
+		player.y(pos[1]);
+		answer.x(pos[0]);
+		answer.y(pos[1]);
+		ghost.x(pos[0]);
+		ghost.y(pos[1]);
 
 		if (typeof levels[level].obstacles != "undefined")
 		{
@@ -159,125 +193,161 @@ function setLevel(lvl)
 			}
 		}
 
-    }
+	}
 
-    if (levels[level].answer)
-    {
-        answer.matrix(levels[level].answer);
-    }
+	if (levels[level].answer)
+	{
+		answer.matrix(levels[level].answer);
+	}
 	for (var i=0; i<levelObstacles.length; i++)
 	{
 		levelObstacles[i].matrix(levels[level].obstacles[i]);
 	}
 
-    redraw();
+	helpGroup.clear();
+	if (typeof levels[level].help != "undefined")
+	{
+		var help = levels[level].help;
+		if (typeof help.text != "undefined")
+		{
+			for (var i=0; i<help.text.length; i++)
+			{
+				var text = helpGroup.text(help.text[i][2]).font(font).fill({color: "#777"});
+				text.move(help.text[i][0], help.text[i][1]);
+			}
+		}
+		if (typeof help.lines != "undefined")
+		{
+			for (var i=0; i<help.lines.length; i++)
+			{
+				var line = addLine(help.lines[i], helpGroup);
+				line.attr("stroke-dasharray", "1, 1");
+				line.stroke({ width: "0.4", color: "#777" });
+				line.marker("end", arrow);
+			}
+		}
+		if (typeof help.curves != "undefined" && false)
+		{
+			for (var i=0; i<help.curves.length; i++)
+			{
+				var c = help.curves[i];
+				var curve = helpGroup.path(describeArc(c[0], c[1], 10, c[2], c[3] == "-", c[4], c[5] == "-", c[6] == "long"));
+				curve.fill({ opacity: 0 });
+				curve.attr("stroke-dasharray", "1, 1");
+				curve.stroke({ width: "0.4", color: "#777" });
+				curve.marker("end", arrow);
+			}
+		}
+	}
 
-    localStorage.setItem("version", version);
-    localStorage.setItem("score", score);
-    localStorage.setItem("level", level);
+	redraw();
+
+	localStorage.setItem("version", version);
+	localStorage.setItem("score", score);
+	localStorage.setItem("level", level);
 
 }
 
 function loadLevel()
 {
 
-    var saveVersion = localStorage.getItem("version");
-    if (saveVersion)
-    {
+	var saveVersion = localStorage.getItem("version");
+	if (saveVersion)
+	{
 
-        score = parseInt(localStorage.getItem("score"));
-        level = parseInt(localStorage.getItem("level"));
-        var parts = saveVersion.split(".");
-        var thisVersionParts = version.split(".");
-        // The first number indicates irreversable save file changes
-        if (parts[0] == thisVersionParts[0])
-        {
-            // The second number are changes that are fixable
-            // (eg adding two levels between 6 and 7)
-            if (parts[1] == 0)
-            {
-                if (level >= 7)
-                {
-                    level += 2;
-                }
-            }
-            if (parts[1] == 1)
-            {
-                level = 0;
-                if (score < 0)
-                {
-                    score = 0;
-                }
-            }
-            setLevel(level);
-            return true;
-        }
-        else
-        {
-            alert("Sorry, your save game was from an unsupported version.");
-            return false;
-        }
+		score = parseInt(localStorage.getItem("score"));
+		level = parseInt(localStorage.getItem("level"));
+		var parts = saveVersion.split(".");
+		var thisVersionParts = version.split(".");
+		// The first number indicates irreversable save file changes
+		if (parts[0] == thisVersionParts[0])
+		{
+			// The second number are changes that are fixable
+			// (eg adding two levels between 6 and 7)
+			if (parts[1] == 0)
+			{
+				if (level >= 7)
+				{
+					level += 2;
+				}
+			}
+			if (parts[1] == 1)
+			{
+				level = 0;
+				if (score < 0)
+				{
+					score = 0;
+				}
+			}
+			setLevel(level);
+			return true;
+		}
+		else
+		{
+			alert("Sorry, your save game was from an unsupported version.");
+			return false;
+		}
 
-    }
-    else
-    {
-        return false;
-    }
+	}
+	else
+	{
+		return false;
+	}
 
 }
 
 function getLine(x, y)
 {
 
-    var margin = 12;
-    var closest = null;
-    var closest_ds = null;
+	var margin = 12;
+	var closest = null;
+	var closest_ds = null;
 
-    setup = levels[level].lines;
+	setup = levels[level].lines;
 
-    for (var i=0; i<lines.length; i++)
-    {
+	for (var i=0; i<lines.length; i++)
+	{
 
-        var line = lines[i];
-        var d_squared = null;
+		var line = lines[i];
+		var d_squared = null;
 
-        var m = slope(line);
-        if (m)
-        {
-            var b = line[1] - m*line[0];
+		var m = slope(line);
+		if (m)
+		{
+			var b = line[1] - m*line[0];
 			// Find perpendicular line's intersection with line (nearest point)
-            var near_x = ((y + x/m) - b) / (m + 1/m);
-            var near_y = m*near_x + b;
-            var d_x = x - near_x;
-            var d_y = y - near_y;
-            d_squared = d_x*d_x + d_y*d_y;
-        }
-        else
-        {
-            var distance = null;
-            if (m == null)
-            {
-                distance = x - line[0];
-            }
-            else
-            {
-                distance = y - line[1];
-            }
-            d_squared = distance*distance;
-        }
+			var near_x = ((y + x/m) - b) / (m + 1/m);
+			var near_y = m*near_x + b;
+			var d_x = x - near_x;
+			var d_y = y - near_y;
+			d_squared = d_x*d_x + d_y*d_y;
+		}
+		else
+		{
+			var distance = null;
+			if (m == null)
+			{
+				distance = x - line[0];
+			}
+			else
+			{
+				distance = y - line[1];
+			}
+			d_squared = distance*distance;
+		}
 
-        if (d_squared < margin)
-        {
-            if (closest == null || d_squared < closest_ds)
-            {
-                closest = i;
-                closest_ds = d_squared;
-            }
-        }
+		if (d_squared < margin)
+		{
+			if (closest == null || d_squared < closest_ds)
+			{
+				closest = i;
+				closest_ds = d_squared;
+			}
+		}
 
-    }
+	}
 
-    return closest;
+	return closest;
 
 }
 
@@ -291,41 +361,41 @@ function lose()
 function clicked(e)
 {
 
-    var x = gameX(e.pageX - container.offsetLeft);
-    var y = gameY(e.pageY - container.offsetTop);
-    e.preventDefault();
+	var x = gameX(e.pageX - container.offsetLeft);
+	var y = gameY(e.pageY - container.offsetTop);
+	e.preventDefault();
 
-    if (x >= 0 && x <= 100)
-    {
+	if (x >= 0 && x <= 100)
+	{
 
 		// Reset button
-        if (x > reset.x() && x < reset.x() + reset.width()
-            && y > reset.y() && y < reset.y() + reset.height())
-        {
-            setLevel(level);
-            return;
-        }
+		if (x > reset.x() && x < reset.x() + reset.width()
+			&& y > reset.y() && y < reset.y() + reset.height())
+		{
+			setLevel(level);
+			return;
+		}
 
-        var line = getLine(x, y);
+		var line = getLine(x, y);
 
-        if (line != null)
-        {
+		if (line != null)
+		{
 
-            skipTween();
+			skipTween();
 
-            reflect(levels[level].lines[line]);
+			reflect(levels[level].lines[line]);
 
-            moves += 1;
+			moves += 1;
 			displayMatrix.morph(matrix);
 			tweenAt = 0;
-            tweenHandle = requestAnimationFrame(tween);
+			tweenHandle = requestAnimationFrame(tween);
 
-            var center = matrix.multiply(new SVG.Matrix("0,0,0,0," + (player.x() + 4) + "," + (player.y() + 4)));
+			var center = matrix.multiply(new SVG.Matrix("0,0,0,0," + (player.x() + 4) + "," + (player.y() + 4)));
 			center = [center.e, center.f];
-            if (center[0] < 0 || center[0] > 100 || center[1] < 0 || center[1] > 100)
-            {
+			if (center[0] < 0 || center[0] > 100 || center[1] < 0 || center[1] > 100)
+			{
 				lose();
-            }
+			}
 			if (typeof levels[level].obstacles != "undefined")
 			{
 				for (var i=0; i<levels[level].obstacles.length; i++)
@@ -336,118 +406,131 @@ function clicked(e)
 					}
 				}
 			}
-            if (matEq(matrix, new SVG.Matrix(levels[level].answer)))
-            {
-                sendData();
-                onParText.show();
-                if (moves <= levels[level].par)
-                {
+			if (matEq(matrix, new SVG.Matrix(levels[level].answer)))
+			{
+				sendData();
+				onParText.show();
+				ghost.opacity(0);
+				if (moves <= levels[level].par)
+				{
 					onParText.text("ON PAR!")
-                    score += 20;
-                }
-                else
-                {
+					score += 20;
+				}
+				else
+				{
 					onParText.text("COMPLETED!")
-                    score += 10;
-                }
-                setTimeout(setLevel, 2500, level + 1);
-            }
+					score += 10;
+				}
+				setTimeout(setLevel, 2500, level + 1);
+			}
 
-            redraw();
+			hovered(e);
+			redraw();
 
-        }
+		}
 
-    }
+	}
 
 }
 
 function hovered(e)
 {
 
-    var x = gameX(e.pageX - container.offsetLeft);
-    var y = gameY(e.pageY - container.offsetTop);
+	var x = gameX(e.pageX - container.offsetLeft);
+	var y = gameY(e.pageY - container.offsetTop);
 
-    if (lastLine != null)
-    {
-        levelLines[lastLine].stroke({ color: "#000" });
-    }
+	if (lastLine != null)
+	{
+		levelLines[lastLine].stroke({ color: "#000" });
+		ghost.opacity(0);
+	}
 
-    if (x >= 0 && x <= 100)
-    {
+	if (x >= 0 && x <= 100)
+	{
 
-        var line = getLine(x, y);
+		var line = getLine(x, y);
 
-        if (line != null)
-        {
-            levelLines[line].stroke({ color: "#888" });
-            lastLine = line;
-        }
+		if (line != null)
+		{
+			levelLines[line].stroke({ color: "#888" });
+			lastLine = line;
+			ghost.matrix(getReflection(matrix, levels[level].lines[line]));
+			ghost.opacity(0.5);
+		}
 
-    }
+	}
 
 }
 
 function pressed(e)
 {
 
-    if (e.keyCode == "B".charCodeAt(0))
-    {
+	if (e.keyCode == "B".charCodeAt(0))
+	{
 		var fullString = matrix.toString();
 		// Strips "matrix("...")", then adds quotes
 		document.write("\"" + fullString.substr(7,fullString.length-8) + "\"");
-    }
-    if (e.keyCode == "R".charCodeAt(0))
-    {
-        setLevel(level);
-    }
-    if (e.keyCode == "9".charCodeAt(0))
-    {
-        setLevel(level - 1);
-    }
-    if (e.keyCode == "0".charCodeAt(0))
-    {
-        setLevel(level + 1);
-    }
+	}
+	if (e.keyCode == "R".charCodeAt(0))
+	{
+		setLevel(level);
+	}
+	if (e.keyCode == "9".charCodeAt(0))
+	{
+		setLevel(level - 1);
+	}
+	if (e.keyCode == "0".charCodeAt(0))
+	{
+		setLevel(level + 1);
+	}
+
+}
+
+function getReflection(original, line)
+{
+	
+	var m = slope(line);
+	var flip = null;
+	if (m != null && m != 0)
+	{
+		var b = line[1] - m*line[0];
+		var q1 = m + (1 / m);
+		var q2 = 1 + m*m;
+		// Matricized version of http://martin-thoma.com/reflecting-a-point-over-a-line/
+		// 1 3 5
+		// 2 4 6
+		flip = new SVG.Matrix(2/m/q1 - 1, 2*m/q2, 2/q1, 2*m*m/q2 - 1, -2*b/q1, 2*b/q2);
+	}
+	else
+	{
+		if (m == null)
+		{
+			// Vertical line flip
+			flip = new SVG.Matrix(-1, 0, 0, 1, 2 * line[0], 0);
+		}
+		else
+		{
+			// Horizontal line flip
+			flip = new SVG.Matrix(1, 0, 0, -1, 0, 2 * line[1]);
+		}
+	}
+	return flip.multiply(original);
 
 }
 
 function reflect(line)
 {
 
-    var m = slope(line);
-    var flip = null;
-    if (m != null && m != 0)
-    {
-        var b = line[1] - m*line[0];
-        var q1 = m + (1 / m);
-        var q2 = 1 + m*m;
-        // Matricized version of http://martin-thoma.com/reflecting-a-point-over-a-line/
-		// 1 3 5
-		// 2 4 6
-        flip = new SVG.Matrix(2/m/q1 - 1, 2*m/q2, 2/q1, 2*m*m/q2 - 1, -2*b/q1, 2*b/q2);
-    }
-    else
-    {
-        if (m == null)
-        {
-            // Vertical line flip
-            flip = new SVG.Matrix(-1, 0, 0, 1, 2 * line[0], 0);
-        }
-        else
-        {
-            // Horizontal line flip
-            flip = new SVG.Matrix(1, 0, 0, -1, 0, 2 * line[1]);
-        }
-    }
-    matrix = flip.multiply(matrix);
+	matrix = getReflection(matrix, line);
+	return;
 
 }
 
 function redraw()
 {
 	player.matrix(displayMatrix.at(tweenAt));
-    movesText.text("MOVES: " + moves);
-    scoreText.text("SCORE: " + score);
+	movesText.text("MOVES: " + moves);
+	scoreText.text("SCORE: " + score);
 }
 
 function tween(time)
@@ -466,19 +549,19 @@ function tween(time)
 	{
 		tweenHandle = requestAnimationFrame(tween);
 	}
-    redraw();
+	redraw();
 }
 
 function skipTween()
 {
-    if (tweenHandle)
-    {
-        cancelAnimationFrame(tweenHandle);
-        tweenHandle = null;
+	if (tweenHandle)
+	{
+		cancelAnimationFrame(tweenHandle);
+		tweenHandle = null;
 		tweenStart = null;
 		displayMatrix = displayMatrix.at(tweenAt);
 		tweenAt = 0;
-    }
+	}
 }
 
 function near(a, b)
@@ -490,52 +573,56 @@ function near(a, b)
 function matEq(a, b)
 {
 	return (near(a.a, b.a) && near(a.b, b.b) && near(a.c, b.c) &&
-	        near(a.d, b.d) && near(a.e, b.e) && near(a.f, b.f));
+			near(a.d, b.d) && near(a.e, b.e) && near(a.f, b.f));
 }
 
 function slope(line)
 {
-    if (line[2] == 0)
-    {
-        return null;
-    }
-    else
-    {
-        return line[3] / line[2];
-    }
+	if (line[2] == 0)
+	{
+		return null;
+	}
+	else
+	{
+		return line[3] / line[2];
+	}
 }
 
 function gameX(windowX)
 {
-    return windowX / size * 100;
+	return windowX / size * 100;
 }
 function gameY(windowY)
 {
-    return windowY / size * 100;
+	return windowY / size * 100;
 }
 
 function resize()
 {
-    size = Math.min(container.offsetWidth, container.offsetHeight);
+	size = Math.min(container.offsetWidth, container.offsetHeight);
 }
 
 function sendData()
 {
 
-    // Send the time it took to beat the level to CG so I can optimize difficulty
-    var now = new Date();
-    var time = Math.floor((now - startTime) / 1000);
-    var req = new XMLHttpRequest();
-    req.open("get", "http://cosinegaming.com/flip/data?level="+level+"&time="+time+"&moves="+moves, true);
-    req.send();
-    startTime = now;
+	// Send the time it took to beat the level to CG so I can optimize difficulty
+	var now = new Date();
+	var time = Math.floor((now - startTime) / 1000);
+	var req = new XMLHttpRequest();
+	req.open("get", "http://cosinegaming.com/flip/data?level="+level+"&time="+time+"&moves="+moves, true);
+	req.send();
+	startTime = now;
 
 }
 
-function addLine(line)
+function addLine(line, group)
 {
-    var points = lineGroup.line(line[0], line[1], line[0] + line[2], line[1] + line[3]);
-    return points.stroke({ width: 1 });
+	if (typeof group == "undefined")
+	{
+		group = lineGroup;
+	}
+	var points = group.line(line[0], line[1], line[0] + line[2], line[1] + line[3]);
+	return points.stroke({ width: 1 });
 }
 
 document.addEventListener("DOMContentLoaded", initialize);
