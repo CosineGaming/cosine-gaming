@@ -1,0 +1,168 @@
+LEVEL 1:
+
+    Completions: 182
+    Average time: 210
+    Average moves: 1
+    Percent gave up: 0
+    Percent made it here: 100
+
+LEVEL 2:
+
+    Completions: 139
+    Average time: 4
+    Average moves: 1
+    Percent gave up: 24
+    Percent made it here: 76
+
+LEVEL 3:
+
+    Completions: 98
+    Average time: 4
+    Average moves: 2
+    Percent gave up: 30
+    Percent made it here: 53
+
+LEVEL 4:
+
+    Completions: 89
+    Average time: 12
+    Average moves: 4
+    Percent gave up: 10
+    Percent made it here: 48
+
+LEVEL 5:
+
+    Completions: 74
+    Average time: 23
+    Average moves: 5
+    Percent gave up: 17
+    Percent made it here: 40
+
+LEVEL 6:
+
+    Completions: 35
+    Average time: 49
+    Average moves: 4
+    Percent gave up: 53
+    Percent made it here: 19
+
+LEVEL 7:
+
+    Completions: 14
+    Average time: 64
+    Average moves: 5
+    Percent gave up: 60
+    Percent made it here: 7
+
+LEVEL 8:
+
+    Completions: 13
+    Average time: 49
+    Average moves: 6
+    Percent gave up: 8
+    Percent made it here: 7
+
+LEVEL 9:
+
+    Completions: 13
+    Average time: 12
+    Average moves: 2
+    Percent gave up: 0
+    Percent made it here: 7
+
+LEVEL 10:
+
+    Completions: 14
+    Average time: 91
+    Average moves: 3
+    Percent gave up: -7
+    Percent made it here: 7
+
+LEVEL 11:
+
+    Completions: 9
+    Average time: 237
+    Average moves: 5
+    Percent gave up: 36
+    Percent made it here: 4
+
+LEVEL 12:
+
+    Completions: 13
+    Average time: 27
+    Average moves: 2
+    Percent gave up: -44
+    Percent made it here: 7
+
+LEVEL 13:
+
+    Completions: 7
+    Average time: 9
+    Average moves: 4
+    Percent gave up: 47
+    Percent made it here: 3
+
+LEVEL 14:
+
+    Completions: 11
+    Average time: 15
+    Average moves: 3
+    Percent gave up: -57
+    Percent made it here: 6
+
+LEVEL 15:
+
+    Completions: 12
+    Average time: 150
+    Average moves: 5
+    Percent gave up: -9
+    Percent made it here: 6
+
+LEVEL 16:
+
+    Completions: 9
+    Average time: 42
+    Average moves: 4
+    Percent gave up: 25
+    Percent made it here: 4
+
+LEVEL 17:
+
+    Completions: 11
+    Average time: 20
+    Average moves: 5
+    Percent gave up: -22
+    Percent made it here: 6
+
+LEVEL 18:
+
+    Completions: 7
+    Average time: 136
+    Average moves: 6
+    Percent gave up: 37
+    Percent made it here: 3
+
+LEVEL 19:
+
+    Completions: 8
+    Average time: 27
+    Average moves: 4
+    Percent gave up: -14
+    Percent made it here: 4
+
+LEVEL 20:
+
+    Completions: 4
+    Average time: 19
+    Average moves: 7
+    Percent gave up: 50
+    Percent made it here: 2
+
+LEVEL 21:
+
+    Completions: 4
+    Average time: 54
+    Average moves: 4
+    Percent gave up: 0
+    Percent made it here: 2
+
