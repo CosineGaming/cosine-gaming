@@ -1,5 +1,55 @@
-// x, y, width, height
-levels = [
+/* This is where the levels are stored (and loaded in one big chunk :/) to be displayed by game.js
+ * It's actually JSON but I don't want to bother calling it something else.
+ * The format is a little (read: VERY) wonky. So here's a quick guide.
+ * It is a file with exclusively ONE variable: levels
+ * 	levels is an array of all the levels, which are objects. Each level contains: ...
+ *	 	lines
+ * 		answer
+ * 		player
+ * 		par
+ * 	(If one of these are missing it will be taken from the previous level (normally. Not be design))
+ * 	... and may optionally contain:
+ * 		obstacles
+ * 		help
+ * 	lines is an array of lines. A line is an array of four numbers: x, y, width, height
+ * 		The line is rendered from (x, y) to (x+width, y+height)
+ * 	answer is a matrix in the form "a,b,c,d,e,f"
+ * 		Where a-f are defined as:
+ * 			a b c
+ * 			d e f
+ * 			0 0 1
+ * 		(I THINK. TODO: Make sure this is right)
+ * 		It can be obtained by playing a created level and pressing B when player is in desired location
+ * 		The matrix will be spit out and can be pasted in.
+ * 		Because the output can be long, the next attribute is usually written as `, [attrname]` rather than after answer
+ * 	player is an array [x, y] which is where the player starts. Answer is transformed from here as well
+ * 	par is displayed as "TARGET: [par]". It is the least amount of moves the level can take
+ * 	obstacles is a list of matrices (SEE ANSWER) that will be displayed red to not be landed on
+ * 	help is an object describing the grey help text that accompanies most levels
+ * 		It consists of (all optional):
+ * 			lines
+ * 			curves
+ * 			text
+ * 		lines is like the lines within levels (SEE LINES within levels) but with a dotted line and an arrowhead
+ * 			Each line has an optional fifth element that if true, an arrowhead will not be displayed
+ * 		curves is complicated af. It is an array of partial circles displayed like lines used to indicate angles
+ * 			Each curve is [centerx, centery, slopeStart, startPos, slopeEnd, endPos, direction]
+ * 			(centerx, centery) is the center of the circl the partial arc is made from. Usually the intersection of two lines
+ * 			slopeStart is the slope of the line on which the curve starts (rather than an angle, for convenience)
+ * 			startPos is "+" if the start is to the right of the center, or "-" if the start is to the left
+ * 				If it is neither, it is "+" if it is below (+y), or "-" if it is above (-y)
+ *			slopeEnd, endPos are the same as the start counterparts, but for the end of the curve
+ *			direction is "cw" if the curve travels clockwise and "ccw" otherwise.
+ *				THE ANGLE IS CURRENTLY ASSUMED TO BE <180degrees, therefore direction flips the circle rather than the curvature
+ *		text is [x, y, string] where string is the text to be displayed and x,y is the position of the top left corner
+ * That's it, it's actually a surprisingly appropriate format if you think about the way the levels are designed.
+ * TODO:
+ * 	Make a level designer
+ * 	Minify this file
+ * 	Figure out a way to find levels by number
+ */
+
+var levels = [
 	{
 		// 1-V
 		lines :
