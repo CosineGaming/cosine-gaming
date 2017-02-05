@@ -122,6 +122,10 @@ function initText()
 // Thank thank mr skeltel http://stackoverflow.com/a/18473154
 function slopeToXY(centerX, centerY, radius, slope, pos)
 {
+	if (slope === null)
+	{
+		return {x: centerX, y: centerY + radius * (pos ? 1 : -1)}
+	}
 	var length = Math.sqrt(slope*slope + 1);
 	return { x: centerX + radius / length * (pos ? 1 : -1), y: centerY + radius * slope / length * (pos ? 1 : -1) };
 }
@@ -130,12 +134,11 @@ function slopeToXY(centerX, centerY, radius, slope, pos)
 function describeArc(x, y, radius, startSlope, posStart, endSlope, posEnd, largeArc)
 {
 
-	var start = slopeToXY(x, y, radius, endSlope, posEnd);
-	var end = slopeToXY(x, y, radius, startSlope, posStart);
-	
+	var start = slopeToXY(x, y, radius, startSlope, posStart);
+	var end = slopeToXY(x, y, radius, endSlope, posEnd);
 	var d = [
 		"M", start.x, start.y, 
-		"A", radius, radius, 0, +largeArc, 0, end.x, end.y
+		"A", radius, radius, 0, 0, +largeArc, end.x, end.y
 	].join(" ");
 
 	return d;
@@ -149,7 +152,7 @@ function setLevel(lvl)
 
 	lineGroup.clear();
 	levelLines = [];
-
+	
 	lines = levels[level].lines;
 	for (var i=0; i<lines.length; i++)
 	{
@@ -212,7 +215,7 @@ function setLevel(lvl)
 		{
 			for (var i=0; i<help.text.length; i++)
 			{
-				var text = helpGroup.text(help.text[i][2]).font(font).fill({color: "#777"});
+				var text = helpGroup.text(help.text[i][2]).font(font).fill({ color: "#777"});
 				text.move(help.text[i][0], help.text[i][1]);
 			}
 		}
@@ -223,15 +226,23 @@ function setLevel(lvl)
 				var line = addLine(help.lines[i], helpGroup);
 				line.attr("stroke-dasharray", "1, 1");
 				line.stroke({ width: "0.4", color: "#777" });
-				line.marker("end", arrow);
+				if (!help.lines[i][4]) // If list is five long and fifth is true, no arrows
+				{
+					line.marker("end", arrow);
+				}
 			}
 		}
-		if (typeof help.curves != "undefined" && false)
+		if (typeof help.curves != "undefined")
 		{
 			for (var i=0; i<help.curves.length; i++)
 			{
 				var c = help.curves[i];
-				var curve = helpGroup.path(describeArc(c[0], c[1], 10, c[2], c[3] == "-", c[4], c[5] == "-", c[6] == "long"));
+				var radius = 10;
+				if (c[7])
+				{
+					radius = c[7];
+				}
+				var curve = helpGroup.path(describeArc(c[0], c[1], radius, c[2], c[3] == "+", c[4], c[5] == "+", c[6] == "cw"));
 				curve.fill({ opacity: 0 });
 				curve.attr("stroke-dasharray", "1, 1");
 				curve.stroke({ width: "0.4", color: "#777" });
@@ -239,6 +250,8 @@ function setLevel(lvl)
 			}
 		}
 	}
+
+	ghost.opacity(0);
 
 	redraw();
 
@@ -410,7 +423,6 @@ function clicked(e)
 			{
 				sendData();
 				onParText.show();
-				ghost.opacity(0);
 				if (moves <= levels[level].par)
 				{
 					onParText.text("ON PAR!")
