@@ -63,9 +63,10 @@ var tweenAt = null;
 var tweenStart = null;
 var tweenHandle = null;
 
+// TODO: Change font to Courier New and make it fit
 var font = ({ family: "Palatino Linotype", size: 3, fill: "black" });
 
-var version = "0.2";
+var version = "1.0";
 
 var playerSize = 8;
 
@@ -94,7 +95,7 @@ function initialize()
 	helpGroup = game.group();
 	answer = game.image("http://cosinegaming.com/static/flip/assets/target.svg", playerSize);
 	player = game.image("http://cosinegaming.com/static/flip/assets/player.svg", playerSize);
-	ghost  = game.image("/static/flip/assets/ghost.svg", playerSize).opacity(0);
+	ghost  = game.image("http://cosinegaming.com/static/flip/assets/ghost.svg", playerSize).opacity(0);
 	reset = game.image("http://cosinegaming.com/static/flip/assets/reset.svg", 6).move(72, 4);
 
 	arrow = game.marker(8, 8, function(line) {
@@ -111,9 +112,31 @@ function initialize()
 
 	if (!loadLevel())
 	{
-		setLevel(0);
+		var text = helpGroup.text("Sorry, but your save is from an unsupported version.\nHINT: Press 9 and 0 to navigate levels.").font(font).move(12, 25);
+		color(text, "help");
 	}
 
+}
+
+function color(text, textColor)
+{
+	if (textColor == "red")
+	{
+		textColor = "#7F0000";
+	}
+	else if (textColor == "green")
+	{
+		textColor = "#007F00";
+	}
+	else if (textColor == "help")
+	{
+		textColor = "#777";
+	}
+	else
+	{
+		console.log("color function given unknown color " + textColor);
+	}
+	text.fill({color: textColor});
 }
 
 function initText()
@@ -131,10 +154,7 @@ function initText()
 
 	offLevelText = game.text("YOU DIED. RESTARTING LEVEL.")
 	offLevelText.font(font);
-	offLevelText.style("fill", "#000");
-	offLevelText.style("stroke", "#FFF");
-	offLevelText.style("stroke-width", "0.05");
-	offLevelText.style("font-size", "15");
+	color(offLevelText, "red");
 	offLevelText.move(10, 90);
 
 	levelText = game.text("");
@@ -189,6 +209,7 @@ function setLevel(lvl)
 
 	matrix = new SVG.Matrix;
 	displayMatrix = matrix;
+	player.matrix(displayMatrix);
 
 	moves = 0;
 	var par = levels[level].par;
@@ -196,8 +217,10 @@ function setLevel(lvl)
 	{
 		par = "Unsolved"
 	}
-	parText.text("TARGET: " + par);
+	parText.text("NEEDED: " + par);
 	onParText.hide();
+	color(scoreText, "black");
+	color(movesText, "black");
 	offLevelText.hide();
 	levelText.text("LEVEL: " + (level + 1));
 
@@ -242,7 +265,8 @@ function setLevel(lvl)
 		{
 			for (var i=0; i<help.text.length; i++)
 			{
-				var text = helpGroup.text(help.text[i][2]).font(font).fill({ color: "#777"});
+				var text = helpGroup.text(help.text[i][2]).font(font);
+				color(text, "help");
 				text.move(help.text[i][0], help.text[i][1]);
 			}
 		}
@@ -280,7 +304,8 @@ function setLevel(lvl)
 
 	ghost.opacity(0);
 
-	redraw();
+	scoreText.text("SCORE: " + score);
+	movesText.text("MOVES : 0");
 
 	localStorage.setItem("version", version);
 	localStorage.setItem("score", score);
@@ -304,34 +329,26 @@ function loadLevel()
 		{
 			// The second number are changes that are fixable
 			// (eg adding two levels between 6 and 7)
-			if (parts[1] == 0)
-			{
-				if (level >= 7)
-				{
-					level += 2;
-				}
-			}
 			if (parts[1] == 1)
 			{
-				level = 0;
-				if (score < 0)
-				{
-					score = 0;
-				}
+				// This version was mismarked as compatible despite being incompatible
+				setLevel(0);
+				return false;
 			}
 			setLevel(level);
 			return true;
 		}
 		else
 		{
-			alert("Sorry, your save game was from an unsupported version.");
+			setLevel(0);
 			return false;
 		}
 
 	}
 	else
 	{
-		return false;
+		setLevel(0);
+		return true;
 	}
 
 }
@@ -339,7 +356,7 @@ function loadLevel()
 function getLine(x, y)
 {
 
-	var margin = 12;
+	var margin = 64;
 	var closest = null;
 	var closest_ds = null;
 
@@ -394,6 +411,8 @@ function getLine(x, y)
 function lose()
 {
 	score -= 5;
+	scoreText.text("SCORE: " + score + " (-5)");
+	color(scoreText, "red");
 	offLevelText.show();
 	setTimeout(setLevel, 2000, level);
 }
@@ -426,6 +445,19 @@ function clicked(e)
 			reflect(levels[level].lines[line]);
 
 			moves += 1;
+			movesText.text("MOVES : " + moves);
+			if (moves > levels[level].par * 1.4)
+			{
+				// Add help text to suggest restarting when it is much overdue
+				color(movesText, "red");
+				var text = helpGroup.text("Press R or click to restart").font(font).move(28, 5);
+				color(text, "help");
+				var line = addLine([68, 7, 5, 0], helpGroup);
+				line.attr("stroke-dasharray", "1, 1");
+				line.stroke({ width: "0.4", color: "#777" });
+				line.marker("end", arrow);
+			}
+
 			displayMatrix.morph(matrix);
 			tweenAt = 0;
 			tweenHandle = requestAnimationFrame(tween);
@@ -450,21 +482,25 @@ function clicked(e)
 			{
 				sendData();
 				onParText.show();
+				plus = 0;
 				if (moves <= levels[level].par)
 				{
-					onParText.text("ON PAR!")
-					score += 20;
+					onParText.text("ON PAR!");
+					plus = 20;
 				}
 				else
 				{
 					onParText.text("COMPLETED!")
-					score += 10;
+					plus = 10;
 				}
+				score += plus;
+				color(onParText, "green");
+				color(scoreText, "green");
+				scoreText.text("SCORE: " + score + " (+" + plus + ")");
 				setTimeout(setLevel, 2500, level + 1);
 			}
 
 			hovered(e);
-			redraw();
 
 		}
 
@@ -527,7 +563,7 @@ function pressed(e)
 
 function getReflection(original, line)
 {
-	
+
 	var m = slope(line);
 	var flip = null;
 	if (m != null && m != 0)
@@ -565,13 +601,6 @@ function reflect(line)
 
 }
 
-function redraw()
-{
-	player.matrix(displayMatrix.at(tweenAt));
-	movesText.text("MOVES: " + moves);
-	scoreText.text("SCORE: " + score);
-}
-
 function tween(time)
 {
 	var tweenTime = 320;
@@ -588,7 +617,7 @@ function tween(time)
 	{
 		tweenHandle = requestAnimationFrame(tween);
 	}
-	redraw();
+	player.matrix(displayMatrix.at(tweenAt));
 }
 
 function skipTween()
