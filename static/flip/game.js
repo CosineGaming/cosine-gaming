@@ -23,6 +23,11 @@
  * through which recipients can access the Corresponding Source.
  *
  * @licend The above is the entire license notice for the JavaScript code in this page.
+ *
+ * TODO:
+ * 	Mobile support
+ * 		Don't turn grey...?
+ *
  */
 
 var container = null;
@@ -64,7 +69,7 @@ var tweenStart = null;
 var tweenHandle = null;
 
 // TODO: Change font to Courier New and make it fit
-var font = ({ family: "Palatino Linotype", size: 3, fill: "black" });
+var font = ({ family: "Courier New", size: 3, fill: "black" });
 
 var version = "1.0";
 
@@ -450,9 +455,9 @@ function clicked(e)
 			{
 				// Add help text to suggest restarting when it is much overdue
 				color(movesText, "red");
-				var text = helpGroup.text("Press R or click to restart").font(font).move(28, 5);
+				var text = helpGroup.text("Press R or click to restart").font(font).move(21, 5);
 				color(text, "help");
-				var line = addLine([68, 7, 5, 0], helpGroup);
+				var line = addLine([65, 8, 8, 0], helpGroup);
 				line.attr("stroke-dasharray", "1, 1");
 				line.stroke({ width: "0.4", color: "#777" });
 				line.marker("end", arrow);
@@ -513,6 +518,7 @@ function hovered(e)
 
 	var x = gameX(e.pageX - container.offsetLeft);
 	var y = gameY(e.pageY - container.offsetTop);
+	e.preventDefault();
 
 	if (lastLine != null)
 	{
@@ -539,6 +545,8 @@ function hovered(e)
 
 function pressed(e)
 {
+
+	e.preventDefault();
 
 	if (e.keyCode == "B".charCodeAt(0))
 	{
@@ -676,8 +684,9 @@ function sendData()
 	// Send the time it took to beat the level to CG so I can optimize difficulty
 	var now = new Date();
 	var time = Math.floor((now - startTime) / 1000);
+	var domain = window.location.hostname;
 	var req = new XMLHttpRequest();
-	req.open("get", "http://cosinegaming.com/flip/data?level="+level+"&time="+time+"&moves="+moves, true);
+	req.open("get", "flip/data?level="+level+"&time="+time+"&moves="+moves+"&host="+domain, true);
 	req.send();
 	startTime = now;
 

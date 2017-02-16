@@ -30,55 +30,79 @@ def regex(s, find, replace=""):
 
 app.jinja_env.filters['regex'] = regex
 
-class Game():
-	def __init__(self, name, file="", extract=False, size=False, url="", description=""):
-		self.name = name
-		# URL defaults to lowercase with hyphens instead of spaces, eg less-than-shadows
-		if url:
-			self.url = url
-		else:
-			self.url = self.name.lower().replace(" ", "-")
-		if description:
-			self.description = description
-		else:
-			javascript_url = self.url.replace("-", "_")
-			if javascript_url in descriptions:
-				self.description = Markup(descriptions[javascript_url])
-		# Where it's downloaded
-		self.file = file
+# Set if not defined
+def sind(obj, key, value):
+	if not key in obj:
+		obj[key] = value
+def game_defaults(game):
+	sind(game, "url", game["name"].lower().replace(" ", "-"))
+	javascript_url = game["url"].replace("-", "_")
+	if javascript_url in descriptions:
+		sind(game, "description", Markup(descriptions[javascript_url]))
+	sind(game, "extract", False)
+	if "size" in game: # Indicates uses online-game template, has swf default
+		sind(game, "swf", "/static/online-games/" + game["url"] + ".swf")
 
-		# These arguments only used for Download Games
-		# If it's a zip file
-		self.zip = (self.file[-4:] == ".zip" or extract)
+games_json = app.jinja_env.get_template("games.json").render()
+games = json.loads(games_json)
+for game in games:
+	game_defaults(game)
 
-		# These arguments only used for Online Games
-		self.size = size
-		# self.file, for an online game, defaults
-		if self.size:
-			self.file = "/static/online-games/" + self.url + ".swf"
+platform_to_string = {
+	"windows" : "Windows",
+	"macos" : "Mac",
+	"linux" : "GNU/Linux"
+}
 
-	name = ""
-	url = ""
-	description = ""
-	file = ""
-
-	download = False
-	extract = False
-
-	size = False
-
-games = [
-	Game("Flip"),
-	Game("Swarm"),
-	Game("Dash", "https://www.dropbox.com/s/2vynb3smhc914sn/Dash.exe?dl=1"),
-	Game("Revenge", size=[800, 595]),
-	Game("Parallel", "https://www.dropbox.com/s/kk4imwyd9b6hewp/Parallel.zip?dl=1", extract=True),
-	Game("Less than Shadows", size=[800, 600]),
-	Game("Sniper", "https://www.dropbox.com/s/ftr7hp44wsntpzx/Sniper.zip?dl=1", extract=True),
-	Game("Ace Slicenick", size=[1000, 570]),
-	Game("Stealth", size=[475, 600]),
-	Game("Circle Wars", "https://www.dropbox.com/s/0q5zu02ybvleduj/CircleWars.exe?dl=1")
-]
+#class Game()
+	#def __init__(self, name, file="", extract=False, size=False, url="", description=""):
+		#self.name = name
+		## URL defaults to lowercase with hyphens instead of spaces, eg less-than-shadows
+		#if url:
+			#self.url = url
+		#else:
+			#self.url = self.name.lower().replace(" ", "-")
+		#if description:
+			#self.description = description
+		#else:
+			#javascript_url = self.url.replace("-", "_")
+			#if javascript_url in descriptions:
+				#self.description = Markup(descriptions[javascript_url])
+		## Where it's downloaded
+		#self.file = file
+#
+		## These arguments only used for Download Games
+		## If it's a zip file
+		#self.zip = (self.file[-4:] == ".zip" or extract)
+#
+		## These arguments only used for Online Games
+		#self.size = size
+		## self.file, for an online game, defaults
+		#if self.size:
+			#self.file = "/static/online-games/" + self.url + ".swf"
+#
+	#name = ""
+	#url = ""
+	#description = ""
+	#file = ""
+#
+	#download = False
+	#extract = False
+#
+	#size = False
+#
+#games = [
+	#Game("Flip"),
+	#Game("Swarm"),
+	#Game("Dash", "https://www.dropbox.com/s/2vynb3smhc914sn/Dash.exe?dl=1"),
+	#Game("Revenge", size=[800, 595]),
+	#Game("Parallel", "https://www.dropbox.com/s/kk4imwyd9b6hewp/Parallel.zip?dl=1", extract=True),
+	#Game("Less than Shadows", size=[800, 600]),
+	#Game("Sniper", "https://www.dropbox.com/s/ftr7hp44wsntpzx/Sniper.zip?dl=1", extract=True),
+	#Game("Ace Slicenick", size=[1000, 570]),
+	#Game("Stealth", size=[475, 600]),
+	#Game("Circle Wars", "https://www.dropbox.com/s/0q5zu02ybvleduj/CircleWars.exe?dl=1")
+#]
 
 class Blog_Entry(ndb.Model):
 	index = ndb.IntegerProperty(required=True)
@@ -111,6 +135,7 @@ class Flip_Data(ndb.Model):
 	level = ndb.IntegerProperty(required=True)
 	time = ndb.IntegerProperty(required=True)
 	moves = ndb.IntegerProperty(required=True)
+	host = ndb.StringProperty()
 	@classmethod
 	def query_levels(cls):
 		return cls.query().order(cls.level)
@@ -136,20 +161,27 @@ def custom_render(*args, **kwargs):
 
 @app.route("/<file>")
 def top_level(file):
-	game = [game for game in games if game.url == file]
+	game = [game for game in games if game["url"] == file]
 	if game:
 		game = game[0]
-		if game.size:
+		if "size" in game:
 			return custom_render("online-game.html", game=game)
 		else:
-			return custom_render("download.html", game=game, user_agent=request.user_agent)
+			return custom_render("download.html", game=game, user_agent=request.user_agent, platform_to_string=platform_to_string)
 	else:
 		return custom_render(file + ".html", page=file)
+
+@app.route("/<file>/<platform>")
+def download_page_for_platform(file, platform):
+	game = [game for game in games if game["url"] == file]
+	if game:
+		game = game[0]
+		return custom_render("download.html", platform=platform, game=game, user_agent=request.user_agent, platform_to_string=platform_to_string)
 
 @app.route("/")
 @app.route("/games")
 def games_page():
-	return custom_render("games.html", page="games", games=games)
+	return custom_render("games.html", page="games", games=games, platform_to_string=platform_to_string)
 
 @app.route("/old")
 def old_games_page():
@@ -169,7 +201,7 @@ def new_home():
 
 @app.route("/download/<file>")
 def download(file):
-	return custom_render("download.html", game=Game(file, file))
+	return custom_render("download.html", game={"name":file, "download":{"all":file}}, user_agent=request.user_agent)
 
 @app.route("/flip")
 def flip_game():
@@ -269,7 +301,7 @@ def load_to_do_list(username):
 @app.route("/flip/data", methods=["get"])
 def collect_flip_data():
 	data = Flip_Data(level=int(request.args.get("level")),
-		time=int(request.args.get("time")), moves=int(request.args.get("moves")))
+		time=int(request.args.get("time")), moves=int(request.args.get("moves")), host=request.args.get("host"))
 	data.put()
 	return ""
 
@@ -280,15 +312,25 @@ def view_flip_data():
 	numbers = []
 	times = []
 	moves = []
+	hosts = {}
 	for piece in data:
 		while len(numbers) <= piece.level:
 			numbers.append(0)
 			times.append(0)
 			moves.append(0)
+		if piece.host:
+			if not piece.host in hosts:
+				hosts[piece.host] = 0
 		if (piece.count):
-			numbers[piece.level] += piece.count
+			if piece.host:
+				hosts[piece.host] += piece.count
+			else:
+				numbers[piece.level] += piece.count
 		else:
 			numbers[piece.level] += 1
+			if piece.host:
+				hosts[piece.host] += 1
+				logging.info(hosts)
 		times[piece.level] += piece.time
 		moves[piece.level] += piece.moves
 	# Delete segmented Flip_Data. Data preserved and consolidated below
@@ -321,7 +363,7 @@ def view_flip_data():
 		data = Flip_Data(level=i, time=int(time*number), moves=int(move*number), count=number)
 		data.put()
 
-	return custom_render("flip-data.html", levels=levels)
+	return custom_render("flip-data.html", hosts=hosts, levels=levels)
 
 # Uses level starting from 0
 def shift_flip_data(level, count):

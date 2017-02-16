@@ -2,84 +2,164 @@
 
 {% block title %}Download {{ game.name }} - Cosine Gaming{% endblock %}
 
+{% block head %}
+	{{ super() }}
+	<style>
+		.platform-select li
+		{
+			display: block;
+			width: 284px;
+			margin: 8px;
+			float: left;
+			text-align: center;
+			background-color: #d3e4f9;
+			transition: color 0.2s, background-color 0.2s;
+		}
+		.platform-select li:hover {
+			background-color: #3b9ad6;
+			color: #14115c;
+		}
+		.platform-select li a
+		{
+			display: block;
+			width: 100%;
+			height: 100%;
+			font-size: 30px;
+			padding: 5px 0px;
+			color: #14115c;
+			transition: color 0.05s;
+		}
+		.platform-select li a:active
+		{
+			background-color: #3b9ad6;
+			color: #d3e4f9;
+			text-decoration: none;
+		}
+		.platform-select::after
+		{
+			content: "";
+			display: block;
+			clear: both;
+		}
+	</style>
+{% endblock %}
+
+
+{% if not platform %}
+	{% set platform = user_agent.platform %}
+	{% set custom_platform = False %}
+{% else %}
+	{% set custom_platform = True %}
+{% endif %}
+
+{% if platform in game.download %}
+	{% set download = game.download[platform] %}
+	{% set known_platform = True %}
+{% elif "all" in game.download %}
+	{% set download = game.download["all"] %}
+	{% set known_platform = True %}
+{% else %}
+	{% set known_platform = False %}
+{% endif %}
+
 {% block main %}
 
 	<div class="wrap">
 
 		<div class="card">
 			<h2 class="entry-spaced bottom-spaced">
-				Downloading {{ game.name }}
+				Download{% if known_platform %}ing{% endif %} {{ game.name }}{% if known_platform %} for {{ platform_to_string[platform] }}{% endif %}
 			</h2>
-			<p class="bottom-spaced">
-				If your download does not start automatically in a few seconds, please click this <a href="{{ game.file }}">direct link</a>.
-			</p>
-		</div>
-
-		{% if user_agent.browser == "firefox" %}
-			<div class="card">
-				<img src="/static/download-images/firefox-save.png" alt="Select to save the file." />
-			</div>
-		{% endif %}
-
-		{% if user_agent.browser == "chrome" %}
-			<div class="card">
-				<img src="/static/download-images/chrome-keep.png" alt="Click the arrow, and choose to keep." />
-			</div>
-		{% endif %}
-
-
-		<div class="card">
-
-			{% if game.extract and user_agent.platform != "macos" %}
-
-				{% if user_agent.browser == "firefox" %}
-					<img src="/static/download-images/firefox-folder.png" alt="Right click on the download and select Show in Folder." />
+			{% if known_platform %}
+				{% if not custom_platform %}
+					<a href="/{{ game.url }}/unknown">Download for another platform</a>
 				{% endif %}
-
-				{% if user_agent.browser == "chrome" %}
-					<img src="/static/download-images/chrome-folder.png" alt="Clickk the arrow and select Show in Folder." />
-				{% endif %}
-
-				{% if user_agent.platform == "msie" %}
-					<img src="/static/download-images/ie-save.png" alt="Select to save the file." />
-					<img src="/static/download-images/ie-folder.png" alt="Seloct Open Folder." />
-				{% endif %}
-
-				{% if user_agent.platform == "windows" %}
-					<img src="/static/download-images/windows-extract.png" alt="Right click, and press Extract All." />
-					<img src="/static/download-images/windows-run.png" alt="Open the folder and double click the file named {{ game.name }}." />
-				{% endif %}
-
+				<p class="bottom-spaced">
+					If your download does not start automatically in a few seconds, please use this <a href="{{ download }}">direct link</a>.
+				</p>
 			{% else %}
-
-				{% if user_agent.browser == "firefox" %}
-					<img src="/static/download-images/firefox-run.png" alt="Click on the file." />
-				{% endif %}
-
-				{% if user_agent.browser == "chrome" %}
-					<img src="/static/download-images/chrome-run.png" alt="Click on the file." />
-				{% endif %}
-
-				{% if user_agent.browser == "msie" %}
-					<img src="/static/download-images/ie-run.png" alt="Select to Run the file." />
-				{% endif %}
-
+				<h3>{{ game.name }} is available for:</h3>
+				<ul class="platform-select">
+				{% for platform, link in game.download.iteritems() %}
+					<li>
+					<a href="/{{ game.url }}/{{ platform }}">{{ platform_to_string[platform] }}</a>
+					</li>
+				{% endfor %}
+				</ul>
 			{% endif %}
-
+					
 		</div>
 
-		{% if user_agent.platform == "windows" %}
+		{% if known_platform %}
+
+			{% if user_agent.browser == "firefox" %}
+				<div class="card">
+					<img src="/static/download-images/firefox-save.png" alt="Select to save the file." />
+				</div>
+			{% endif %}
+	
+			{% if user_agent.browser == "chrome" %}
+				<div class="card">
+					<img src="/static/download-images/chrome-keep.png" alt="Click the arrow, and choose to keep." />
+				</div>
+			{% endif %}
+	
+	
 			<div class="card">
-				<img src="/static/download-images/windows-run-anyway.png" alt="Select Run Anyway." />
+	
+				{% if game["extract"] and platform != "macos" %}
+	
+					{% if user_agent.browser == "firefox" %}
+						<img src="/static/download-images/firefox-folder.png" alt="Right click on the download and select Show in Folder." />
+					{% endif %}
+	
+					{% if user_agent.browser == "chrome" %}
+						<img src="/static/download-images/chrome-folder.png" alt="Clickk the arrow and select Show in Folder." />
+					{% endif %}
+	
+					{% if platform == "msie" %}
+						<img src="/static/download-images/ie-save.png" alt="Select to save the file." />
+						<img src="/static/download-images/ie-folder.png" alt="Seloct Open Folder." />
+					{% endif %}
+	
+					{% if platform == "windows" %}
+						<img src="/static/download-images/windows-extract.png" alt="Right click, and press Extract All." />
+						<img src="/static/download-images/windows-run.png" alt="Open the folder and double click the file named {{ game.name }}." />
+					{% endif %}
+	
+				{% else %}
+	
+					{% if user_agent.browser == "firefox" %}
+						<img src="/static/download-images/firefox-run.png" alt="Click on the file." />
+					{% endif %}
+	
+					{% if user_agent.browser == "chrome" %}
+						<img src="/static/download-images/chrome-run.png" alt="Click on the file." />
+					{% endif %}
+	
+					{% if user_agent.browser == "msie" %}
+						<img src="/static/download-images/ie-run.png" alt="Select to Run the file." />
+					{% endif %}
+	
+				{% endif %}
+	
 			</div>
+	
+			{% if platform == "windows" %}
+				<div class="card">
+					<img src="/static/download-images/windows-run-anyway.png" alt="Select Run Anyway." />
+				</div>
+			{% endif %}
+	
+			<p class="card">
+				Thank you for downloading {{ game.name }}. While you wait, why don't you take our <a href="/contact">survey</a> or play an <a href="/games">online game</a>.
+			</p>
+
 		{% endif %}
 
 		<p class="card">{{ game.description }}<p>
-		<p class="card">
-			Thank you for downloading {{ game.name }}. While you wait, why don't you take our <a href="/contact">survey</a> or play an <a href="/games">online game</a>.
-		</p>
-
-		<iframe id="download" width="1" height="1" src="{{ game.file }}" style="display:none;"></iframe>
+	
+			<iframe id="download" width="1" height="1" src="{{ download }}" style="display:none;"></iframe>
 
 	</div>
 

@@ -154,6 +154,29 @@
 				<div class="description">
 					<h2>{{ game.name }}</h2>
 					<p>{{ game.description }}</p>
+					<br /><br /><b>
+						{% if "download" in game %}
+							{% set platforms = game.download.keys() %}
+							{% if platforms|length != 1 %}
+								Available for 
+								{% for i in range(platforms|length) %}
+									{{ platform_to_string[game.download.keys()[i]] }}{% 
+									if platforms|length == 2 %}{%
+										if i == 0 %} and
+										{% else %}.{% endif %}
+									{% else %}
+										{% if i == platforms|length - 2 %}, and
+										{% elif i != platforms|length - 1 %},
+										{% else %}.{% endif %}
+									{% endif %}
+								{% endfor %}
+							{% else %}
+								{{ platform_to_string[game.download.keys()[0]] }}-only download.
+							{% endif %}
+						{% else %}
+							Play online{% if game.mobile %} (mobile-friendly){% endif%}.
+						{% endif %}
+					</b>
 				</div>
 			</a>
 		</li>

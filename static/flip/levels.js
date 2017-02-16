@@ -102,7 +102,7 @@ var levels = [
 		par: 2,
 		help:
 		{
-			text: [[10, 12, "Two parallel reflections makes a translation\nIt's not a law of Flip, it's a law of the universe"]],
+			text: [[4, 12, "Two parallel reflections makes a translation\nIt's not a law of Flip, it's a law of the universe"]],
 			lines: [[50, 60, 40, 0], [10, 50, 40, 0], [50, 50, 40, 0]]
 		}
 	},
@@ -142,7 +142,7 @@ var levels = [
 		par: 4,
 		help:
 		{
-			text: [[10, 12, "So picking the right lines to pair up is important"], [40.5, 60, "Pair 1"], [65.5, 60, "Pair\n2"]],
+			text: [[6, 12, "So picking the right lines to pair up is important"], [40.5, 60, "Pair\n1"], [65.5, 60, "Pair\n2"]],
 			lines: [[40, 60, 10, 0, true], [65, 60, 8, 0, true], [10, 70, 20, 0], [30, 70, 16, 0]]
 		}
 	},
@@ -304,7 +304,7 @@ var levels = [
 		],
 		help:
 		{
-			text: [[4, 12, "A culminatingly difficult level before we start something new"]]
+			text: [[6, 12, "A difficult level before we start something new"]]
 		}
 	},
 	{
@@ -480,7 +480,7 @@ var levels = [
 		help:
 		{
 			text: [
-				[10, 12, "You can think of transformations affecting the next line,\nbut they do it backwards!"],
+				[4, 12, "You can think of translations as affecting lines,\nbut they do it backwards!"],
 				[45, 62, "First"], [85, 62, '"Second"']
 			],
 			lines: [[70, 0, 20, 100, true], [80, 60, -20, 0], [40, 50, 40, 0]]

@@ -1,0 +1,51 @@
+[
+{
+	"name": "Flip"
+},
+{
+	"name": "Swarm"
+},
+{
+	"name": "Dash",
+	"download": {
+		"windows": "https://www.dropbox.com/s/2vynb3smhc914sn/Dash.exe?dl=1",
+		"macos": "https://www.dropbox.com/s/wf126xyv7qo3kas/Dash?dl=1"
+	}
+},
+{
+	"name": "Revenge",
+	"size": [800, 595]
+},
+{
+	"name": "Parallel",
+	"download": {
+		"windows": "https://www.dropbox.com/s/kk4imwyd9b6hewp/Parallel.zip?dl=1"
+	},
+	"extract": true
+},
+{
+	"name": "Less than Shadows",
+	"size": [800, 600]
+},
+{
+	"name": "Sniper",
+	"download": {
+		"windows": "https://www.dropbox.com/s/ftr7hp44wsntpzx/Sniper.zip?dl=1"
+	},
+	"extract": true
+},
+{
+	"name": "Ace Slicenick",
+	"size": [1000, 570]
+},
+{
+	"name": "Stealth",
+	"size": [475, 600]
+},
+{
+	"name": "Circle Wars",
+	"download": {
+		"windows": "https://www.dropbox.com/s/0q5zu02ybvleduj/CircleWars.exe?dl=1"
+	}
+}
+]

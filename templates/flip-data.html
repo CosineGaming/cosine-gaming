@@ -15,6 +15,14 @@
 <body>
 
 	<ol>
+	{% for host,number in hosts.iteritems() %}
+		<li>HOST: {{ host }}
+			<li>Total level completions: {{ number }}
+		</li>
+		<hr />
+	</ol>
+	{% endfor %}
+	<ol>
 	{% for level in levels %}
 		<li>LEVEL {{ level.level }}:<ul>
 			<li>Completions: {{ level.number }}</li>
