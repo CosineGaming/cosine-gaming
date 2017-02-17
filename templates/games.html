@@ -50,6 +50,10 @@
 			transition: opacity 0.3s;
 		}
 
+		.game-image.incompatible {
+			opacity: 0.6;
+		}
+
 		.game-list li:hover .game-image {
 			opacity: 0.2;
 		}
@@ -109,6 +113,7 @@
 						}
 						else
 						{
+							// TODO: Update for incompatible
 							gameImages[i].style.opacity = "1";
 							gameLabels[i].style.opacity = "0";
 						}
@@ -147,39 +152,52 @@
 
 	<ul class="game-list">
 
-		{% for game in games %}
-		<li>
-			<a href="/{{ game.url }}">
-				<div style="background-image: url(/static/game-links/{{ game.url }}.png);" class="game-image"></div>
-				<div class="description">
-					<h2>{{ game.name }}</h2>
-					<p>{{ game.description }}</p>
-					<br /><br /><b>
-						{% if "download" in game %}
-							{% set platforms = game.download.keys() %}
-							{% if platforms|length != 1 %}
-								Available for 
-								{% for i in range(platforms|length) %}
-									{{ platform_to_string[game.download.keys()[i]] }}{% 
-									if platforms|length == 2 %}{%
-										if i == 0 %} and
-										{% else %}.{% endif %}
-									{% else %}
-										{% if i == platforms|length - 2 %}, and
-										{% elif i != platforms|length - 1 %},
-										{% else %}.{% endif %}
-									{% endif %}
-								{% endfor %}
-							{% else %}
-								{{ platform_to_string[game.download.keys()[0]] }}-only download.
-							{% endif %}
+		{% macro platform_text(game) %}
+			{% if "download" in game %}
+				{% set platforms = game.download.keys() %}
+				{% if platforms|length != 1 %}
+					Available for 
+					{% for i in range(platforms|length) %}
+						{{ platform_to_string[game.download.keys()[i]] }}{% 
+						if platforms|length == 2 %}{%
+							if i == 0 %} and
+							{% else %}.{% endif %}
 						{% else %}
-							Play online{% if game.mobile %} (mobile-friendly){% endif%}.
+							{% if i == platforms|length - 2 %}, and
+							{% elif i != platforms|length - 1 %},
+							{% else %}.{% endif %}
 						{% endif %}
-					</b>
-				</div>
-			</a>
-		</li>
+					{% endfor %}
+				{% else %}
+					{{ platform_to_string[game.download.keys()[0]] }}-only download.
+				{% endif %}
+			{% else %}
+				Play online{% if game.mobile %} (mobile-friendly){% endif%}.
+			{% endif %}
+		{% endmacro %}
+
+		{% macro game_tile(game, compatible) %}
+			<li>
+				<a href="/{{ game.url }}">
+					<div style="background-image: url(/static/game-links/{{ game.url }}.png);" class="game-image{% if not compatible %} incompatible{% endif %}"></div>
+					<div class="description">
+						<h2>{{ game.name }}</h2>
+						<p>{{ game.description }}</p>
+						<br /><br /><b>{{ platform_text(game) }}</b>
+					</div>
+				</a>
+			</li>
+		{% endmacro %}
+
+		{% for game in games %}
+			{% if not game.download or user_agent.platform in game.download or "all" in game.download %}
+				{{ game_tile(game, True) }}
+			{% endif %}
+		{% endfor %}
+		{% for game in games %}
+			{% if not (not game.download or user_agent.platform in game.download or "all" in game.download) %}
+				{{ game_tile(game, False) }}
+			{% endif %}
 		{% endfor %}
 
 	</ul>

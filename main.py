@@ -181,18 +181,10 @@ def download_page_for_platform(file, platform):
 @app.route("/")
 @app.route("/games")
 def games_page():
-	return custom_render("games.html", page="games", games=games, platform_to_string=platform_to_string)
+	return custom_render("games.html", page="games", games=games, platform_to_string=platform_to_string, user_agent=request.user_agent)
 
 @app.route("/old")
 def old_games_page():
-	return custom_render("old.html", page="games", games=games)
-
-@app.route("/A")
-def new_games_page():
-	return custom_render("games.html", page="games", games=games)
-
-@app.route("/B")
-def old_games_page_B():
 	return custom_render("old.html", page="games", games=games)
 
 @app.route("/index.html")

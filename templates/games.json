@@ -1,6 +1,7 @@
 [
 {
-	"name": "Flip"
+	"name": "Flip",
+	"mobile": true
 },
 {
 	"name": "Swarm"
