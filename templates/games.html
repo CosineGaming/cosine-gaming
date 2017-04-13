@@ -162,8 +162,8 @@
 						if platforms|length == 2 %}{%
 							if i == 0 %} and
 							{% else %}.{% endif %}
-						{% else %}
-							{% if i == platforms|length - 2 %}, and
+						{% else %}{%
+							if i == platforms|length - 2 %}, and
 							{% elif i != platforms|length - 1 %},
 							{% else %}.{% endif %}
 						{% endif %}
