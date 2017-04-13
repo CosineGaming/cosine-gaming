@@ -98,10 +98,10 @@ function initialize()
 	lineGroup = game.group();
 	obstacleGroup = game.group();
 	helpGroup = game.group();
-	answer = game.image("http://cosinegaming.com/static/flip/assets/target.svg", playerSize);
-	player = game.image("http://cosinegaming.com/static/flip/assets/player.svg", playerSize);
-	ghost  = game.image("http://cosinegaming.com/static/flip/assets/ghost.svg", playerSize).opacity(0);
-	reset = game.image("http://cosinegaming.com/static/flip/assets/reset.svg", 6).move(72, 4);
+	answer = game.image("//cosinegaming.com/static/flip/assets/target.svg", playerSize);
+	player = game.image("//cosinegaming.com/static/flip/assets/player.svg", playerSize);
+	ghost  = game.image("//cosinegaming.com/static/flip/assets/ghost.svg", playerSize).opacity(0);
+	reset = game.image("//cosinegaming.com/static/flip/assets/reset.svg", 6).move(72, 4);
 
 	arrow = game.marker(8, 8, function(line) {
 		var stroke = {color: "#777", width: "1"};
