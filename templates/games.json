@@ -1,7 +1,8 @@
 [
 {
 	"name": "Flip",
-	"mobile": true
+	"mobile": true,
+	"source": "https://github.com/CosineGaming/cosine-gaming/tree/master/static/flip"
 },
 {
 	"name": "Swarm"
@@ -12,10 +13,12 @@
 		"windows": "https://www.dropbox.com/s/2vynb3smhc914sn/Dash.exe?dl=1",
 		"macos": "https://www.dropbox.com/s/wf126xyv7qo3kas/Dash?dl=1"
 	}
+	, "source": "https://github.com/CosineGaming/Dash"
 },
 {
 	"name": "Revenge",
 	"size": [800, 595]
+	, "source": "https://github.com/CosineGaming/Revenge"
 },
 {
 	"name": "Parallel",
@@ -23,6 +26,7 @@
 		"windows": "https://www.dropbox.com/s/kk4imwyd9b6hewp/Parallel.zip?dl=1"
 	},
 	"extract": true
+	, "source": "https://github.com/CosineGaming/CodeIndigo/blob/master/CodeIndigo/29.cpp"
 },
 {
 	"name": "Less than Shadows",
@@ -32,16 +36,21 @@
 	"name": "Sniper",
 	"download": {
 		"windows": "https://www.dropbox.com/s/ftr7hp44wsntpzx/Sniper.zip?dl=1"
+		, "linux": "https://www.dropbox.com/s/g7n7i2674qssvkc/Sniper.tar.gz?dl=1"
+		, "macos": "https://www.dropbox.com/s/30cs099jz3mvoht/Sniper-Source.tar.gz?dl=1"
 	},
 	"extract": true
+	, "source": "https://www.dropbox.com/s/30cs099jz3mvoht/Sniper-Source.tar.gz?dl=1"
 },
 {
 	"name": "Ace Slicenick",
 	"size": [1000, 570]
+	, "source": "https://www.dropbox.com/s/wku0kyl7s3xxnao/Ace%20Slicenick.fla?dl=1"
 },
 {
 	"name": "Stealth",
-	"size": [475, 600]
+	"size": [475, 600],
+	"source": "https://www.dropbox.com/s/4xacnqkgtxlpl8e/Stealth.fla?dl=1"
 },
 {
 	"name": "Circle Wars",
@@ -50,3 +59,4 @@
 	}
 }
 ]
+
