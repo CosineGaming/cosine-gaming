@@ -1,11 +1,17 @@
 [
 {
+	"name": "Entropy",
+	"mobile": true,
+	"source": "https://github.com/CosineGaming/LD37"
+},
+{
 	"name": "Flip",
 	"mobile": true,
 	"source": "https://github.com/CosineGaming/cosine-gaming/tree/master/static/flip"
 },
 {
 	"name": "Swarm"
+	, "source": "https://github.com/CosineGaming/LD-33"
 },
 {
 	"name": "Dash",
