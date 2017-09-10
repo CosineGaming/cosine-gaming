@@ -7,3 +7,6 @@
 [submodule "static/flip"]
 	path = static/flip
 	url = git@github.com:CosineGaming/flip.git
+[submodule "static/swarm"]
+	path = static/swarm
+	url = git@github.com:CosineGaming/swarm.git
