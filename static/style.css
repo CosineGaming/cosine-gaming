@@ -87,8 +87,17 @@ b {
 	font-weight: bold;
 }
 
-li {
+ul.dash {
 	list-style: none;
+	margin-left: 20px;
+	padding-left: 20px;
+}
+
+ul.dash > li:before {
+	display: inline-block;
+	content: "- ";
+	width: 20px;
+	margin-left: -20px;
 }
 
 /* Universal Classes */
