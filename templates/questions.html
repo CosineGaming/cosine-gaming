@@ -1,0 +1,54 @@
+{% extends "standard.html" %}
+
+{% block title %}Questions - Cosine Gaming{% endblock %}
+{% block description %}Ask Cosine a question{% endblock %}
+
+{% block style %}
+	.date {
+		font-style: italic;
+	}
+	.question:before {
+		content: "Q: "
+	}
+	.answer {
+		margin-top: 20px;
+	}
+	.answer:before {
+		content: "A: "
+	}
+{% endblock %}
+
+{% block main %}
+
+	<div class="wrap">
+
+		{% if filled_out %}
+			<div class="slide-in card">
+				<p style="font-weight: bold; font-size: 26px;" class="highlight">Thank you</p>
+			</div>
+		{% endif %}
+
+		<div class="card">
+			<h2 class="bottom-spaced">
+				Ask Cosine a question <span style="font-size: 20px;">or a comment</span>
+			</h2>
+			<form name="question" action="/questions" method="post">
+				<textarea name="question" placehold="Question"></textarea>
+				<input type="submit" value="Submit" />
+			</form>
+			<p style="font-style: italic;">
+				You can also email me at <a href="mailto:cosinegaming@gmail.com?Subject=Online%20Form">cosinegaming@gmail.com</a>.
+			</p>
+		</div>
+
+		{% for question in questions %}
+			<div class="card">
+				<p class="date">{{ question.date.strftime("%F %l:%M%P") }}</p>
+				<h3 class="question">{{ question.question|e }}</h3>
+				<p class="answer">{{ question.answer }}</p>
+			</div>
+		{% endfor %}
+
+	</div>
+
+{% endblock main %}

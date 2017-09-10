@@ -16,6 +16,12 @@ indexes:
   - name: date
     direction: desc
 
+- kind: Question
+  properties:
+  - name: answered
+  - name: date
+    direction: desc
+
 - kind: Survey_Entry
   ancestor: yes
   properties:

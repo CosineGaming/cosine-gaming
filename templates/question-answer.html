@@ -1,0 +1,34 @@
+{% extends "standard.html" %}
+
+{% block title %}Questions - Cosine Gaming{% endblock %}
+{% block description %}Ask Cosine a question{% endblock %}
+
+{% block main %}
+
+	<div class="wrap">
+
+		{% if filled_out %}
+			<div class="slide-in card">
+				<p style="font-weight: bold; font-size: 26px;" class="highlight">Submitted</p>
+			</div>
+		{% endif %}
+
+		<div class="password">
+			<input type="password">
+
+		{% for question in questions %}
+			<div class="card">
+				<p class="date">{{ question.date.strftime("%F %l:%M%P") }}</p>
+				<p class="question">{{ question.question|e }}</p>
+				<form name="question" method="post" action="/questions/answer">
+					<textarea name="answer"></textarea>
+					<input type="hidden" name="key" value="{{ question.key.urlsafe() }}" />
+					<input type="submit" name="submit" value="Submit" /> | 
+					<input type="submit" name="delete" value="Delete" style="background-color: #92021a">
+				</form>
+			</div>
+		{% endfor %}
+
+	</div>
+
+{% endblock main %}

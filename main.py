@@ -122,12 +122,17 @@ class Blog_Entry(ndb.Model):
 	def get_exact(cls, index):
 		return cls.query(cls.index == index).get()
 
-class Survey_Entry(ndb.Expando):
-	_default_indexed = False
-	date = ndb.DateTimeProperty(auto_now_add=True, indexed=True)
+class Question(ndb.Model):
+	date = ndb.DateTimeProperty(required=True, auto_now_add=True, indexed=True)
+	question = ndb.TextProperty(required=True)
+	answer = ndb.TextProperty()
+	answered = ndb.BooleanProperty(required=True, default=False, indexed=True)
 	@classmethod
-	def query_surveys(cls):
-		return cls.query().order(-cls.date)
+	def query_answered(cls):
+		return cls.query().filter(cls.answered == True).order(-cls.date)
+	@classmethod
+	def query_unanswered(cls):
+		return cls.query().filter(cls.answered == False).order(-cls.date)
 
 class Flip_Data(ndb.Model):
 	count = ndb.IntegerProperty(required=False)
@@ -238,37 +243,29 @@ def submit_blog_post():
 	else:
 		return custom_render("blog-writer.html", title=title, author=author, post=post, failed=True)
 
-@app.route("/contact")
-def contact():
-	return custom_render("contact.html", games=games, responses={})
-
-@app.route("/contact/submit", methods=["post"])
-def contact_submit():
-	if request.form["four"] in ["4", "four", "fourr", "44", "2+2"]: #Oh you're so clever, aren't you, "2+2"
-		entry = Survey_Entry()
-		for key, value in request.form.iteritems():
-			if key != "four":
-				setattr(entry, key, value)
-		entry.put()
-		return custom_render("contact.html", filled_out=True, games=games, responses=request.form)
+@app.route("/questions", methods=["get", "post"])
+def questions_page():
+	if request.method == "GET":
+		return custom_render("questions.html", questions=Question.query_answered(), page="questions")
 	else:
-		return custom_render("contact.html", captcha_failed=True, games=games, responses=request.form)
+		question = Question(question=request.form["question"])
+		question.put()
+		return custom_render("questions.html", questions=Question.query_answered(), page="questions", filled_out=True)
 
-@app.route("/contact/view")
-def view_results():
-	entries = Survey_Entry.query_surveys().fetch()
-	rv = "Survey results:<br />"
-	for entry in entries:
-		for key in entry._properties.iterkeys():
-			rv += key + ": " + str(getattr(entry, key)) + "<br />"
-		rv += "--------------<br />"
-	rv += '<br /><a href="clear">Clear data</a>'
-	return rv
-
-@app.route("/contact/clear")
-def clear_results():
-	ndb.delete_multi(Survey_Entry.query().fetch(keys_only=True))
-	return view_results()
+@app.route("/questions/answer", methods=["get","post"])
+def answer_questions():
+	if request.method == "GET":
+		return custom_render("question-answer.html", questions=Question.query_unanswered())
+	else:
+		if "submit" in request.form:
+			question = ndb.Key(urlsafe=request.form["key"]).get()
+			question.answer = request.form["answer"]
+			question.answered = True
+			question.put()
+		else:
+			question = ndb.Key(urlsafe=request.form["key"])
+			question.delete()
+		return custom_render("question-answer.html", questions=Question.query_unanswered(), filled_out=True)
 
 def intlist(list):
 	return [int(x) for x in list]
