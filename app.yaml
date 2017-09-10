@@ -4,16 +4,9 @@ runtime: python27
 api_version: 1
 threadsafe: yes
 
-handlers:
+default_expiration: "30d"
 
-- url: /static
-  static_dir: static
-- url: /host
-  static_dir: static/host
-- url: /ld32
-  static_dir: static/ld32
-- url: /Revenge/resources
-  static_dir: static/revengeSounds
+handlers:
 
 - url: /favicon\.ico
   static_files: static/favicon.ico
@@ -27,6 +20,30 @@ handlers:
 - url: /swarm/play
   static_files: static/swarm/game.html
   upload: static/swarm/game.html
+- url: /pale-white-dot/
+  static_files: static/pwd/index.html
+  upload: static/pwd/index.html
+  expiration: "10m"
+
+- url: /host
+  static_dir: static/host
+  expiration: "10m" # People will only access this once, and I might update
+- url: /ld32
+  static_dir: static/ld32
+  expiration: "365d"
+- url: /Revenge/resources
+  static_dir: static/revengeSounds
+- url: /pale-white-dot/
+  static_dir: static/pwd
+  expiration: "7d"
+- url: /static/pwd-post
+  static_dir: static/pwd
+  expiration: "7d"
+- url: /static/pale-white-dot
+  static_dir: static/pwd-ld
+  expiration: "365d" # I'll never change this directory
+- url: /static
+  static_dir: static
 
 - url: /.*
   script: main.app
