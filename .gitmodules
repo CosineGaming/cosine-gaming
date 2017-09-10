@@ -4,3 +4,6 @@
 [submodule "static/entropy"]
 	path = static/entropy
 	url = git@github.com:CosineGaming/entropy.git
+[submodule "static/flip"]
+	path = static/flip
+	url = git@github.com:CosineGaming/flip.git
