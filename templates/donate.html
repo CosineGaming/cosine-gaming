@@ -1,0 +1,129 @@
+{% extends "standard.html" %}
+
+{% block title %}Donate - Cosine Gaming{% endblock %}
+{% block description %}Donate to Cosine{% endblock %}
+
+{% block style %}
+	.donate-logo {
+		height: 75px;
+		float: left;
+		margin-right: 20px;
+	}
+{% endblock %}
+
+{% block main %}
+
+	<div class="wrap">
+
+		<div class="card">
+
+			<p style="font-size: 32px">
+				Cosine Gaming makes <a href="/games">free indie games</a>.
+			</p>
+			<p class="indent">
+				All of my games are <a href="https://www.gnu.org/philosophy/free-sw.html">free software</a>.
+				This is not because they cost nothing (though they do cost
+				nothing!), it is because you have the freedom to play, modify,
+				and distribute them
+				<a href="https://www.gnu.org/licenses/gpl-3.0.en.html">as you please</a>.
+				This is unfortunately exceedingly rare in the video game
+				industry, even for silly web games.
+			</p>
+			<p class="indent">
+				You can email me at
+				<a href="mailto:cosinegaming@gmail.com">cosinegaming@gmail.com</a>
+				or <a href="/questions">ask me a question</a> on the questions
+				page.
+			</p>
+
+		</div>
+
+		<div class="card">
+			<img src="/static/donate/bitcoin.svg" alt="Bitcoin logo" class="donate-logo" />
+			<img src="/static/donate/bitcoin-qr.png" alt="Bitcoin QR code" style="float: right; margin: 0 0 20px 20px;">
+			<p>
+				If you're feeling edgy, go ahead and shoot me
+				some bitcoins. Then in a year when they're worth 10 cents a
+				piece, it'll be like nothing ever happened.
+			</p>
+			<p>
+				Address: <code>1C6SQbQPc2G79rDEQ6mnk4ggqQh3uRwFkz</code>
+				Or use that handy qr code over there.
+			</p>
+			<div style="clear: both;"></div>
+		</div>
+
+		<div class="card">
+			<a href="https://www.patreon.com/cosine">
+				<img src="/static/donate/patreon.png" alt="Patreon logo" class="donate-logo" />
+			</a>
+			<p>
+				Whatever <a href="https://www.patreon.com/cosine">Patreon</a>
+				is, go ahead and do that on
+				<a href="https://www.patreon.com/cosine">this page I made</a>.
+			</p>
+			<div style="clear: both;"></div>
+		</div>
+
+		<div class="card">
+			<a href="https://liberapay.com/Cosine/">
+				<img src="https://liberapay.com/assets/liberapay/icon-v2_yellow-r.svg" alt="Liberapay logo" class="donate-logo" />
+			</a>
+			<p>
+				<a href="https://liberapay.com/Cosine/">Liberapay</a> is a neat
+				<b>free software</b> donation system <b>run by a nonprofit</b>. I set up
+				<a href="https://liberapay.com/Cosine/">a page</a> as an
+				alternative to Patreon. It takes <b>0%</b> of each donation and
+				instead relies on donations itself. So if you're feeling extra kind, why not
+				<a href="https://liberapay.com/Liberapay/donate">donate to Liberapay</a>?
+			</p>
+		</div>
+
+		<div class="card">
+
+			<p>
+				I'm <a href="/about">Cosine</a> and I do almost everything you
+				see on this website, from the games to the site itself. This
+				means I:
+			</p>
+			<ul class="dash">
+				<li>Pay for:<ul class="dash">
+					<li>Server time</li>
+					<li>Game file hosting</li>
+					<li>Domain</li>
+					<li>SSL Certificate</li>
+				</ul></li>
+				<li>Design and maintain the website</li>
+				<li>Design and develop games</li>
+				<li>Do art and music for games</li>
+				<li>And everything else that comes up</li>
+			</ul>
+			<br />
+
+			<p>I try to
+				catalog the help I've had here for fairness:
+			<p>
+			<ul class="dash">
+				<li>The discontinued <a href="/quote">Quote site</a> was
+					populated by QuoteMaster</li>
+				<li>Most of my games have been (casually) play tested by my kind
+					friends.</li>
+				<li>
+					<a href="/blog/post/1/#our-new-game">These</a>(1)
+					<a href="/blog/post/2/#dash">three</a>(2)
+					<a href="/blog/post/8/#minecraft-realms">posts</a>(3)
+					on the <a href="/blog">blog</a> were written by my friends.
+				</li>
+			</ul>
+
+			<br />
+			<p>
+				Money that is donated will be used to support me personally, and
+				will not necessarily be be used to support Cosine Gaming, though
+				it will always go first towards server time and development
+				tools.
+			</p>
+
+	</div>
+
+{% endblock %}

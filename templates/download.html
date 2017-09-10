@@ -81,15 +81,25 @@
 			{% else %}
 				<h3>{{ game.name }} is available for:</h3>
 				<ul class="platform-select">
-				{% for platform, link in game.download.iteritems() %}
+					{% for platform, link in game.download.iteritems() %}
+						<li>
+						<a href="/{{ game.url }}/{{ platform }}">{{ platform_to_string[platform] }}</a>
+						</li>
+					{% endfor %}
 					<li>
-					<a href="/{{ game.url }}/{{ platform }}">{{ platform_to_string[platform] }}</a>
+						<a href="{{ game.source }}">Source code</a>
 					</li>
-				{% endfor %}
 				</ul>
 			{% endif %}
 					
 		</div>
+
+		<p class="card">
+			All of our games are
+			<a href="https://www.gnu.org/philosophy/free-sw.html">free software</a>.
+			You can view or download the
+			<a href="{{ game.source }}">source code</a>.
+		</p>
 
 		{% if known_platform %}
 
