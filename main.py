@@ -160,6 +160,14 @@ def entropy_game():
 	# TODO: This is absurd. Merge with online-game.html
 	return custom_render("entropy.html")
 
+@app.route("/pale-white-dot")
+def pwd_game():
+	return redirect("/pale-white-dot/")
+
+# @app.route("/pale-white-dot")
+# def pwd_game():
+# 	return custom_render("/static/pwd-post/index.html")
+
 @app.route("/blog/")
 def blog_front_page():
 	return blog_page(1)
