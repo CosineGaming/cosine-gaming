@@ -1,0 +1,3 @@
+[submodule "static/creased"]
+	path = static/creased
+	url = git@github.com:CosineGaming/creased.git
