@@ -55,56 +55,6 @@ platform_to_string = {
 	"linux" : "GNU/Linux"
 }
 
-#class Game()
-	#def __init__(self, name, file="", extract=False, size=False, url="", description=""):
-		#self.name = name
-		## URL defaults to lowercase with hyphens instead of spaces, eg less-than-shadows
-		#if url:
-			#self.url = url
-		#else:
-			#self.url = self.name.lower().replace(" ", "-")
-		#if description:
-			#self.description = description
-		#else:
-			#javascript_url = self.url.replace("-", "_")
-			#if javascript_url in descriptions:
-				#self.description = Markup(descriptions[javascript_url])
-		## Where it's downloaded
-		#self.file = file
-#
-		## These arguments only used for Download Games
-		## If it's a zip file
-		#self.zip = (self.file[-4:] == ".zip" or extract)
-#
-		## These arguments only used for Online Games
-		#self.size = size
-		## self.file, for an online game, defaults
-		#if self.size:
-			#self.file = "/static/online-games/" + self.url + ".swf"
-#
-	#name = ""
-	#url = ""
-	#description = ""
-	#file = ""
-#
-	#download = False
-	#extract = False
-#
-	#size = False
-#
-#games = [
-	#Game("Flip"),
-	#Game("Swarm"),
-	#Game("Dash", "https://www.dropbox.com/s/2vynb3smhc914sn/Dash.exe?dl=1"),
-	#Game("Revenge", size=[800, 595]),
-	#Game("Parallel", "https://www.dropbox.com/s/kk4imwyd9b6hewp/Parallel.zip?dl=1", extract=True),
-	#Game("Less than Shadows", size=[800, 600]),
-	#Game("Sniper", "https://www.dropbox.com/s/ftr7hp44wsntpzx/Sniper.zip?dl=1", extract=True),
-	#Game("Ace Slicenick", size=[1000, 570]),
-	#Game("Stealth", size=[475, 600]),
-	#Game("Circle Wars", "https://www.dropbox.com/s/0q5zu02ybvleduj/CircleWars.exe?dl=1")
-#]
-
 class Blog_Entry(ndb.Model):
 	index = ndb.IntegerProperty(required=True)
 	date = ndb.DateProperty(required=True, auto_now_add=True)
