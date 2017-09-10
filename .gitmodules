@@ -1,3 +1,6 @@
 [submodule "static/creased"]
 	path = static/creased
 	url = git@github.com:CosineGaming/creased.git
+[submodule "static/entropy"]
+	path = static/entropy
+	url = git@github.com:CosineGaming/entropy.git
