@@ -10,3 +10,9 @@
 [submodule "static/swarm"]
 	path = static/swarm
 	url = git@github.com:CosineGaming/swarm.git
+[submodule "static/pwd-ld"]
+	path = static/pwd-ld
+	url = git@github.com:CosineGaming/pale-white-dot.git
+[submodule "static/pwd"]
+	path = static/pwd
+	url = git@github.com:CosineGaming/pale-white-dot.git
