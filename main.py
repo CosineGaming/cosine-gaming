@@ -18,8 +18,9 @@ app = Flask(__name__)
 #app.config['DEBUG'] = True
 
 descriptions = {}
-for name, description in app.jinja_env.get_template("game-descriptions.html").blocks.iteritems():
-	descriptions[name] = "".join(description({}))
+descriptions_template = app.jinja_env.get_template("game-descriptions.html")
+for name, description in descriptions_template.blocks.iteritems():
+	descriptions[name] = "".join(description(descriptions_template.new_context()))
 
 page_size = 5
 
