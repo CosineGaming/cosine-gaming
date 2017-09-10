@@ -155,6 +155,11 @@ def download(file):
 def flip_game():
 	return custom_render("flip.html")
 
+@app.route("/entropy")
+def entropy_game():
+	# TODO: This is absurd. Merge with online-game.html
+	return custom_render("entropy.html")
+
 @app.route("/blog/")
 def blog_front_page():
 	return blog_page(1)
