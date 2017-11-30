@@ -24,6 +24,10 @@ handlers:
   static_files: static/pwd/index.html
   upload: static/pwd/index.html
   expiration: "10m"
+- url: /switch
+  static_files: static/switch.html
+  upload: static/switch.html
+  expiration: "60m"
 
 - url: /host
   static_dir: static/host
