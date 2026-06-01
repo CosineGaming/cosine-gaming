@@ -144,22 +144,22 @@
 
 		{% macro platform_text(game) %}
 			{% if "download" in game %}
-				{% set platforms = game.download.keys() %}
+				{% set platforms = game.download.keys()|list %}
 				{% if platforms|length != 1 %}
 					Available for 
-					{% for i in range(platforms|length) %}
-						{{ platform_to_string[game.download.keys()[i]] }}{% 
+					{% for platform in platforms %}
+						{{ platform_to_string[platform] }}{% 
 						if platforms|length == 2 %}{%
-							if i == 0 %} and
+							if loop.index0 == 0 %} and
 							{% else %}.{% endif %}
 						{% else %}{%
-							if i == platforms|length - 2 %}, and
-							{% elif i != platforms|length - 1 %},
+							if loop.index0 == platforms|length - 2 %}, and
+							{% elif not loop.last %},
 							{% else %}.{% endif %}
 						{% endif %}
 					{% endfor %}
 				{% else %}
-					{{ platform_to_string[game.download.keys()[0]] }}-only download.
+					{{ platform_to_string[platforms[0]] }}-only download.
 				{% endif %}
 			{% else %}
 				Play online{% if game.mobile %} (mobile-friendly){% endif%}.
@@ -180,15 +180,17 @@
 		{% endmacro %}
 
 		{% for game in games %}
-			{% if not game.download or user_agent.platform in game.download or "all" in game.download %}
+			{% if static or not game.download or user_agent.platform in game.download or "all" in game.download %}
 				{{ game_tile(game, True) }}
 			{% endif %}
 		{% endfor %}
+		{% if not static %}
 		{% for game in games %}
 			{% if not (not game.download or user_agent.platform in game.download or "all" in game.download) %}
 				{{ game_tile(game, False) }}
 			{% endif %}
 		{% endfor %}
+		{% endif %}
 
 	</ul>
 

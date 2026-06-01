@@ -46,4 +46,6 @@ Temporary Items
 .apdisk
 
 lib/
+site/
+.venv/
 

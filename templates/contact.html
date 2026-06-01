@@ -34,6 +34,13 @@
 			</div>
 		{% endif %}
 
+		{% if static %}
+		<p class="card">
+			The online survey is no longer active. Email us at
+			<a href="mailto:cosinegaming@gmail.com?Subject=Survey%20feedback">cosinegaming@gmail.com</a>
+			with any feedback.
+		</p>
+		{% else %}
 		<form name="survey" action="/contact/submit" method="post">
 
 			<div class="card">
@@ -92,6 +99,7 @@
 			</div>
 
 		</form>
+		{% endif %}
 
 		<p class="card">
 			You can also email us at <a href="mailto:cosinegaming@gmail.com?Subject=Online%20Form">cosinegaming@gmail.com</a>.

@@ -65,7 +65,7 @@
 					<a href="/blog/page/{{ blog_page - 1 }}/" class="pagination card" style="float: left;">< Newer Posts</a>
 				{% endif %}
 
-				{% if entries[-1].index > 0 %}
+				{% if entries and entries[-1].index > 0 %}
 					<a href="/blog/page/{{ blog_page + 1 }}/" class="pagination card" style="float: right;">Older Posts ></a>
 				{% else %}
 					<p class="pagination card" style="float: right; background-color: ">No older posts</p>

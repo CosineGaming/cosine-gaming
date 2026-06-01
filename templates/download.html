@@ -81,7 +81,7 @@
 			{% else %}
 				<h3>{{ game.name }} is available for:</h3>
 				<ul class="platform-select">
-					{% for platform, link in game.download.iteritems() %}
+					{% for platform, link in game.download.items() %}
 						<li>
 						<a href="/{{ game.url }}/{{ platform }}">{{ platform_to_string[platform] }}</a>
 						</li>

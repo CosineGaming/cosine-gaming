@@ -1,2 +1,2 @@
-Flask
-htmlmin
+Jinja2>=3.0
+MarkupSafe>=2.0

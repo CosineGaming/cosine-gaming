@@ -32,6 +32,11 @@
 			<h2 class="bottom-spaced">
 				Ask Cosine a question <span style="font-size: 20px;">or a comment</span>
 			</h2>
+			{% if static %}
+			<p>
+				Email me at <a href="mailto:cosinegaming@gmail.com?Subject=Question">cosinegaming@gmail.com</a>.
+			</p>
+			{% else %}
 			<form name="question" action="/questions" method="post">
 				<textarea name="question" placehold="Question"></textarea>
 				<input type="submit" value="Submit" />
@@ -39,6 +44,7 @@
 			<p style="font-style: italic;">
 				You can also email me at <a href="mailto:cosinegaming@gmail.com?Subject=Online%20Form">cosinegaming@gmail.com</a>.
 			</p>
+			{% endif %}
 		</div>
 
 		{% for question in questions %}
