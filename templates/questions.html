@@ -49,8 +49,8 @@
 
 		{% for question in questions %}
 			<div class="card">
-				<p class="date">{{ question.date.strftime("%F %l:%M%P") }}</p>
-				<h3 class="question">{{ question.question|e }}</h3>
+				<p class="date">{{ question.date|question_date }}</p>
+				<h3 class="question">{{ question.question }}</h3>
 				<p class="answer">{{ question.answer }}</p>
 			</div>
 		{% endfor %}

@@ -53,27 +53,29 @@
 
 		{% macro url(entry) %}/blog/post/{{ entry.index }}/#{{ url_title(entry) }}{% endmacro %}
 
+		{% macro blog_page_url(page) %}{% if page == 1 %}/blog/{% else %}/blog/page/{{ page }}/{% endif %}{% endmacro %}
+
 		{% macro read_full(entry) %}... (<a href="{{ url(entry) }}">Read full post</a>){% endmacro %}
 
-		{% macro post_format(string) %}{{ string|replace("\n", '</p><p class="indent">')|safe }}{% endmacro %}
+		{% macro post_format(string) %}{{ string }}{% endmacro %}
 
 		{% macro pagination() %}
 
 			{% if not full %}
 
 				{% if blog_page > 1 %}
-					<a href="/blog/page/{{ blog_page - 1 }}/" class="pagination card" style="float: left;">< Newer Posts</a>
+					<a href="{{ blog_page_url(blog_page - 1) }}" class="pagination card" style="float: left;">< Newer Posts</a>
 				{% endif %}
 
 				{% if entries and entries[-1].index > 0 %}
-					<a href="/blog/page/{{ blog_page + 1 }}/" class="pagination card" style="float: right;">Older Posts ></a>
+					<a href="{{ blog_page_url(blog_page + 1) }}" class="pagination card" style="float: right;">Older Posts ></a>
 				{% else %}
 					<p class="pagination card" style="float: right; background-color: ">No older posts</p>
 				{% endif %}
 
 			{% else %}
 
-				<a href="/blog/page/{{ blog_page }}/#{{ url_title(entries[0]) }}" class="pagination card" style="float: left;">Return to feed</a>
+				<a href="{{ blog_page_url(blog_page) }}#{{ url_title(entries[0]) }}" class="pagination card" style="float: left;">Return to feed</a>
 
 			{% endif %}
 

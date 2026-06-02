@@ -6,7 +6,9 @@ from __future__ import annotations
 import json
 import re
 import shutil
+from datetime import datetime
 from pathlib import Path
+from types import SimpleNamespace
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from markupsafe import Markup
@@ -14,7 +16,10 @@ from markupsafe import Markup
 ROOT = Path(__file__).resolve().parent
 TEMPLATES = ROOT / "templates"
 STATIC_SRC = ROOT / "static"
+DATA = ROOT / "data"
 SITE = ROOT / "site"
+
+BLOG_PAGE_SIZE = 5
 
 PLATFORM_TO_STRING = {
     "windows": "Windows",
@@ -38,6 +43,10 @@ REDIRECTS = """\
 /games /games/ 301
 /index.html /games/ 301
 /pale-white-dot /pale-white-dot/ 301
+/swarm/play /swarm/play.html 200
+/swarm/play/ /swarm/play.html 301
+/blog/page/1 /blog/ 301
+/blog/page/1/ /blog/ 301
 """
 
 
@@ -52,12 +61,157 @@ def regex_filter(s: str, find: str, replace: str = "") -> str:
     return re.sub(find, replace, s)
 
 
+def question_date_filter(dt: datetime) -> str:
+    hour = dt.hour % 12 or 12
+    return f"{dt.strftime('%Y-%m-%d')} {hour}:{dt.strftime('%M')}{dt.strftime('%p').lower()}"
+
+
+def parse_iso(value: str) -> datetime:
+    return datetime.fromisoformat(value.replace("Z", "+00:00"))
+
+
+def load_json(path: Path) -> list[dict]:
+    if not path.is_file():
+        return []
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def format_blog_post(text: str) -> Markup:
+    text = text.replace("\r\n", "\n").replace("\r", "\n")
+    return Markup(text.replace("\n", '</p><p class="indent">'))
+
+
+def load_blog_entries() -> list[SimpleNamespace]:
+    entries = []
+    for row in load_json(DATA / "blog.json"):
+        dt = parse_iso(row["date"])
+        entries.append(
+            SimpleNamespace(
+                index=row["index"],
+                title=row["title"],
+                author=row["author"],
+                post=format_blog_post(row["post"]),
+                date=dt.date(),
+            )
+        )
+    return entries
+
+
+def load_questions() -> list[SimpleNamespace]:
+    questions = []
+    for row in load_json(DATA / "questions.json"):
+        questions.append(
+            SimpleNamespace(
+                question=Markup(row["question"]),
+                answer=Markup(row.get("answer") or ""),
+                date=parse_iso(row["date"]),
+            )
+        )
+    return questions
+
+
+def load_quotes() -> list[SimpleNamespace]:
+    quotes = []
+    for row in load_json(DATA / "quotes.json"):
+        quotes.append(
+            SimpleNamespace(
+                name=row["name"],
+                quote=Markup(row["quote"]),
+                attribution=Markup(row["attribution"]),
+            )
+        )
+    return quotes
+
+
+def blog_page_entries(entries: list[SimpleNamespace], page: int) -> list[SimpleNamespace]:
+    if not entries:
+        return []
+    max_index = max(entry.index for entry in entries)
+    highest = max_index - (page - 1) * BLOG_PAGE_SIZE
+    batch = [entry for entry in entries if entry.index <= highest]
+    batch.sort(key=lambda entry: -entry.index)
+    return batch[:BLOG_PAGE_SIZE]
+
+
+def blog_page_for_entry(entry: SimpleNamespace, entries: list[SimpleNamespace]) -> int:
+    max_index = max(e.index for e in entries)
+    return (max_index - entry.index) // BLOG_PAGE_SIZE + 1
+
+
+def build_blog_pages(env: Environment, entries: list[SimpleNamespace]) -> None:
+    page1_html = render(
+        env,
+        "blog.html",
+        page="blog",
+        entries=blog_page_entries(entries, 1),
+        blog_page=1,
+        static=True,
+    )
+    write_page("blog/index.html", page1_html)
+    write_page("blog/page/1/index.html", page1_html)
+
+    page = 2
+    while True:
+        batch = blog_page_entries(entries, page)
+        if not batch:
+            break
+        write_page(
+            f"blog/page/{page}/index.html",
+            render(
+                env,
+                "blog.html",
+                page="blog",
+                entries=batch,
+                blog_page=page,
+                static=True,
+            ),
+        )
+        if batch[-1].index <= 0:
+            break
+        page += 1
+
+    for entry in entries:
+        write_page(
+            f"blog/post/{entry.index}/index.html",
+            render(
+                env,
+                "blog.html",
+                page="blog",
+                entries=[entry],
+                blog_page=blog_page_for_entry(entry, entries),
+                full=True,
+                static=True,
+            ),
+        )
+
+
+def build_questions_page(env: Environment, questions: list[SimpleNamespace]) -> None:
+    write_page(
+        "questions/index.html",
+        render(
+            env,
+            "questions.html",
+            questions=questions,
+            page="questions",
+            static=True,
+        ),
+    )
+
+
+def build_quote_page(env: Environment, quotes: list[SimpleNamespace]) -> None:
+    write_page(
+        "quote/index.html",
+        render(env, "quote.html", quotes=quotes),
+    )
+
+
 def setup_env() -> Environment:
     env = Environment(
-        loader=FileSystemLoader(str(TEMPLATES)),
+        loader=FileSystemLoader(str(TEMPLATES), followlinks=True),
         autoescape=select_autoescape(["html", "xml"]),
     )
     env.filters["regex"] = regex_filter
+    env.filters["question_date"] = question_date_filter
     return env
 
 
@@ -88,8 +242,21 @@ def render(env: Environment, template_name: str, **context) -> str:
     return env.get_template(template_name).render(**context)
 
 
-def copy_static_game(url: str) -> bool:
-    """Copy a self-contained game directory from static/ into the site."""
+# Entry pages that extend standard.html (assets live under /static/<name>/).
+JINJA_ENTRY_GAMES: dict[str, str] = {
+    "entropy": "entropy.html",
+}
+
+
+def _is_jinja_template(path: Path) -> bool:
+    if not path.is_file():
+        return False
+    head = path.read_text(encoding="utf-8", errors="replace")[:800]
+    return "{%" in head and "extends" in head
+
+
+def deploy_game_entry(env: Environment, url: str) -> bool:
+    """Publish /{url}/ using assets from static/{url}/."""
     src = STATIC_SRC / url
     if not src.is_dir():
         single = STATIC_SRC / f"{url}.html"
@@ -98,15 +265,24 @@ def copy_static_game(url: str) -> bool:
             return True
         print(f"  skip {url}/ (run: git submodule update --init static/{url})")
         return False
-    dest = SITE / url
-    if dest.exists():
-        shutil.rmtree(dest)
-    shutil.copytree(src, dest, symlinks=True)
+
+    template_name = JINJA_ENTRY_GAMES.get(url)
+    if template_name is None:
+        linked = TEMPLATES / f"{url}.html"
+        if linked.is_file() and _is_jinja_template(linked):
+            template_name = f"{url}.html"
+
+    if template_name:
+        write_page(f"{url}/index.html", render(env, template_name, page=url))
+        return True
+
     entry = src / f"{url}.html"
     if not entry.is_file():
         entry = src / "index.html"
-    if entry.is_file():
-        write_page(f"{url}/index.html", entry.read_text(encoding="utf-8"))
+    if not entry.is_file():
+        print(f"  skip {url}/ (no entry HTML in static/{url})")
+        return False
+    write_page(f"{url}/index.html", entry.read_text(encoding="utf-8"))
     return True
 
 
@@ -160,17 +336,33 @@ def copy_static_assets() -> None:
         shutil.copytree(swarm, swarm_dest, symlinks=True)
 
 
+def _swarm_play_html(game_html: str) -> str:
+    """Relative script/asset paths target /swarm/, not /swarm/play/."""
+    if "<base " in game_html:
+        return game_html
+    return game_html.replace("<head>", '<head>\n\t\t<base href="/swarm/">', 1)
+
+
 def build_swarm_pages(env: Environment) -> None:
+    """Emit swarm pages beside game assets (same layout as legacy /swarm/play)."""
     swarm_dir = TEMPLATES / "swarm"
     if not swarm_dir.is_dir():
         return
     for path in sorted(swarm_dir.glob("*.html")):
         name = path.stem
         if name == "game":
-            write_page("swarm/play/index.html", path.read_text(encoding="utf-8"))
+            game_html = path.read_text(encoding="utf-8")
+            # play.html: scripts resolve as siblings under /swarm/
+            write_page("swarm/play.html", game_html)
+            # play/: for href="play" — needs <base> so assets are not under /swarm/play/
+            write_page("swarm/play/index.html", _swarm_play_html(game_html))
             continue
-        html = render(env, f"swarm/{name}.html")
-        write_page(f"swarm/{name}/index.html", html)
+        out = "swarm/index.html" if name == "index" else f"swarm/{name}.html"
+        if _is_jinja_template(path):
+            html = render(env, f"swarm/{name}.html")
+        else:
+            html = path.read_text(encoding="utf-8")
+        write_page(out, html)
 
 
 def build_game_pages(env: Environment, games: list[dict], ua: UserAgent) -> None:
@@ -216,7 +408,7 @@ def build_game_pages(env: Environment, games: list[dict], ua: UserAgent) -> None
             )
             write_page(f"{url}/unknown/index.html", html)
             continue
-        copy_static_game(url)
+        deploy_game_entry(env, url)
 
 
 def main() -> None:
@@ -267,7 +459,7 @@ def main() -> None:
         template = f"{page}.html"
         template_path = TEMPLATES / template
         if page == "creased" and not template_path.is_file():
-            copy_static_game("creased")
+            deploy_game_entry(env, "creased")
             continue
         if not template_path.is_file():
             continue
@@ -278,26 +470,17 @@ def main() -> None:
         write_page(f"{page}/index.html", render(env, template, **context))
 
     write_page("404.html", render(env, "404.html"))
-    write_page(
-        "blog/index.html",
-        render(
-            env,
-            "blog.html",
-            page="blog",
-            entries=[],
-            blog_page=1,
-            static=True,
-        ),
-    )
-    write_page(
-        "questions/index.html",
-        render(env, "questions.html", questions=[], page="questions", static=True),
-    )
-    write_page("quote/index.html", render(env, "quote.html", quotes=[], static=True))
 
+    blog_entries = load_blog_entries()
+    questions = load_questions()
+    quotes = load_quotes()
+    build_blog_pages(env, blog_entries)
+    build_questions_page(env, questions)
+    build_quote_page(env, quotes)
+
+    copy_static_assets()
     build_game_pages(env, games, ua)
     build_swarm_pages(env)
-    copy_static_assets()
 
     (SITE / "_redirects").write_text(REDIRECTS, encoding="utf-8")
 

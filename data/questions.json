@@ -1,0 +1,65 @@
+[
+  {
+    "date": "2023-11-12T09:32:07.412333Z",
+    "answered": true,
+    "answer": "Thank you, but it's only fun if I get to try and SQL inject you back, right?",
+    "question": "123456'/**/and/**/DBMS_PIPE.RECEIVE_MESSAGE('m',2)='m",
+    "_key": "6324467525484544"
+  },
+  {
+    "date": "2023-02-21T15:30:10.882715Z",
+    "answered": true,
+    "answer": "hiiiii",
+    "question": "oh, hello",
+    "_key": "6217413653692416"
+  },
+  {
+    "date": "2022-02-27T22:12:33.114975Z",
+    "answered": true,
+    "answer": "Thanks for letting me know!    It's probably because the site got moved to a subdomain of my site, but the game refers to the old domain.    i don't really intend to keep paying for that old domain because i am decreasingly attached to it.    Sorry, i will try to get around to fixing that bug, but not necessarily any time soon.   Glad you got the chance to come around again!",
+    "question": "The R image in the flip game doesn't seem to load anymore. You can still play the game with the missing image icon, though. Glad to see the favicon is still the sine curve. -Same asker, passing downtime by combing through old bookmarks.",
+    "_key": "6242987700912128"
+  },
+  {
+    "date": "2018-07-23T01:44:32.469140Z",
+    "answered": true,
+    "question": "True... a sine curve -is- more aesthetically pleasing. I only mentioned it because it's one of those little things that once you notice it, you can't unsee it... like how giant anteater legs look like pandas. -Asker",
+    "answer": "Maybe I should just rename the site \"Sine Gaming.\" Doesn't have the same ring though.<br /><br />\r\n\r\nOh damn you're right. Actually holy shit, I totally always thought they look like pandas. I assumed it was intentional but I guess it's just like a generic disguise? Or maybe because it looks like a face, in general.<br /><br />\r\n\r\n<img src=\"https://ptes.org/wp-content/uploads/2016/05/Giant-anteater-Credit-Jason-Woolgar-e1462536051697.jpg\" alt=\"Giant anteater\" style=\"width:100%\"><br /><br />\r\n\r\nAlso I guess Giant Anteaters are just fucking awesome.",
+    "_key": "5688643247144960"
+  },
+  {
+    "date": "2018-06-02T21:52:37.257050Z",
+    "answered": true,
+    "question": "what if. #gameing",
+    "answer": "did you know<br /><br />\r\n\r\nwhat if<br />\r\nis like, a filler word to me<br />\r\nlike i'll just say it if i don't have anything to say<br /><br />\r\n\r\ndid i pick that up from you or masto or something? &#x1f914;\r\n",
+    "_key": "5738092480692224"
+  },
+  {
+    "date": "2018-04-28T22:58:38.944700Z",
+    "answered": true,
+    "question": "If this is \"Cosine Gaming\", then why does your favicon depict a sine curve?",
+    "answer": "First of all... Damn, nice catch!\n<br /><br />\nTo anyone reading not familiar, the favicon is the image used as the icon of the page, usually in the tab bar, bookmarks menu, etc. And cosine/sine are <a href=\"https://en.wikipedia.org/wiki/Trigonometric_functions\" >trigonometric functions</a> which look the same, but cosine is shifted a bit to the left. \n<br /><br />\nBut Asker. There are no axes, so you don't know where the origin is. Maybe 0,0 is 3/4 of the way through the favicon? :P\n<br /><br />\nTruthfully, I didn't even think of it, though I should have. IDK I think a single period of a sine wave looks prettier than one of a cosine.\n<br /><br />\nPeople are always surprised to learn my uname / site are actually not named after the function, they're named after my last name (manipulated). But I certainly embrace the pun on this site :)\n<br /><br />\nI actually need to redesign my favicon still, this one is left over from an old style on the site that was pink on a dark theme, and I never got around to matching the favicon to the new color scheme. (I miss that old theme though!)\n<br /><br />\nThanks for asking! ",
+    "_key": "5755617021001728"
+  },
+  {
+    "date": "2017-11-30T13:56:28.152880Z",
+    "answered": true,
+    "question": "I really like this web design and highly appreciate all the work you've put in, it greatly increases the quality of my gaming experience.",
+    "answer": "Ah, thanks! <3",
+    "_key": "5709092660183040"
+  },
+  {
+    "date": "2017-11-30T13:55:27.549470Z",
+    "answered": true,
+    "question": "what happens if i ask a second question?",
+    "answer": "OMG you are the first person to ask a question! <3! This happens! [clicks submit]",
+    "_key": "5643259401469952"
+  },
+  {
+    "date": "2017-09-09T18:35:04.559610Z",
+    "answered": true,
+    "question": "What happens if I ask a question?",
+    "answer": "You get an answer!",
+    "_key": "5739083074633728"
+  }
+]
