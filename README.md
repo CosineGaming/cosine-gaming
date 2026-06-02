@@ -7,6 +7,7 @@ Static website for [cosinegaming.com](https://cosinegaming.com).
 ```bash
 python3 -m venv .venv
 .venv/bin/pip install -r requirements.txt
+bash scripts/install_ruffle.sh   # once; Flash games via Ruffle
 .venv/bin/python build.py
 ```
 

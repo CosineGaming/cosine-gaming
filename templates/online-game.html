@@ -3,15 +3,37 @@
 {% block title %}{{ game.name }} - Cosine Gaming{% endblock %}
 {% block description %}{{ game.description }}{% endblock %}
 
+{% block head %}
+	{{ super() }}
+	<script>
+		window.RufflePlayer = window.RufflePlayer || {};
+		window.RufflePlayer.config = {
+			publicPath: "/static/ruffle/",
+			autoplay: "on",
+			unmuteOverlay: "visible",
+			urlRewriteRules: [
+				[/^https?:\/\/(www\.)?cosinegaming\.com\/Revenge\/resources\//, "/static/revengeSounds/"],
+				["http://www.cosinegaming.com/", "/games/"],
+			],
+		};
+	</script>
+	<script src="/static/ruffle/ruffle.js"></script>
+{% endblock %}
+
 {% block main %}
 
 <div class="wrap" style="max-width: {{ game.size[0]+100 }}px;">
 
 	<div class="card">
 	    <h2 class="bottom-spaced">{{ game.name }}</h2>
-	    <object width="{{ game.size[0] }}px" height="{{ game.size[1] }}" data="{{ game.swf }}">
-	        Sorry, you need <a href="http://get.adobe.com/jp/flashplayer/otherversions/">Adobe Flash Player</a> to play this game.
-	        If you're on a tablet, that probably means you can't play this game.
+	    <object
+	    	class="flash-game"
+	    	type="application/x-shockwave-flash"
+	    	width="{{ game.size[0] }}"
+	    	height="{{ game.size[1] }}"
+	    	data="{{ game.swf }}">
+	        <param name="movie" value="{{ game.swf }}" />
+	        <p>Sorry, this game could not be loaded.</p>
 	    </object>
 	</div>
     <p class="card">{{ game.description }}</p>

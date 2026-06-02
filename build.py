@@ -6,6 +6,7 @@ from __future__ import annotations
 import json
 import re
 import shutil
+import subprocess
 from datetime import datetime
 from pathlib import Path
 from types import SimpleNamespace
@@ -303,6 +304,18 @@ def redirect_page(target: str) -> str:
     )
 
 
+def ensure_ruffle() -> None:
+    """Self-hosted Ruffle for Flash games (static/ruffle/ruffle.js)."""
+    if (STATIC_SRC / "ruffle" / "ruffle.js").is_file():
+        return
+    script = ROOT / "scripts" / "install_ruffle.sh"
+    if not script.is_file():
+        raise RuntimeError(
+            "Ruffle is not installed. Run: bash scripts/install_ruffle.sh"
+        )
+    subprocess.run(["bash", str(script)], check=True)
+
+
 def copy_static_assets() -> None:
     dest = SITE / "static"
     if dest.exists():
@@ -478,6 +491,7 @@ def main() -> None:
     build_questions_page(env, questions)
     build_quote_page(env, quotes)
 
+    ensure_ruffle()
     copy_static_assets()
     build_game_pages(env, games, ua)
     build_swarm_pages(env)
